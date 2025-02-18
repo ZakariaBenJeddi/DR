@@ -402,7 +402,7 @@ if (isset($_GET['del'])) {
       $(document).on('click', '.edit_data', function() {
         var edit_id = $(this).attr('id');
         $.ajax({
-          url: "Edit_budget_dr.php",
+          url: "Edit_cds.php",
           type: "post",
           data: {
             edit_id: edit_id
@@ -420,7 +420,7 @@ if (isset($_GET['del'])) {
       $(document).on('click', '.edit_data2', function() {
         var edit_id2 = $(this).attr('id');
         $.ajax({
-          url: "Info_budget_dr.php",
+          url: "info_cds_v2.php",
           type: "post",
           data: {
             edit_id2: edit_id2

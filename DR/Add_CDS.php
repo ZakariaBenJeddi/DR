@@ -209,9 +209,6 @@ if (strlen($_SESSION['sid'] == 0)) {
                         </div>
                       </div>
                       <hr>
-
-
-
                     </div>
                     <!-- /.card-body -->
                     <div class="card-footer">
