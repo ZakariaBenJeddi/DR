@@ -16,57 +16,96 @@ if (empty($_SESSION['sid'])) {
   header('location:logout.php');
 }
 
+
+$sql_types_formation = $dbh->query("SELECT DISTINCT type_formation FROM cds_v2");
+$sql_types_formation->execute();
+$types_formation = $sql_types_formation->fetchAll(PDO::FETCH_ASSOC);
+
+$sql_niveau = $dbh->query("SELECT DISTINCT niveau FROM cds_v2");
+$sql_niveau->execute();
+$niveau = $sql_niveau->fetchAll(PDO::FETCH_ASSOC);
+
+$sql_efp = $dbh->query("SELECT DISTINCT efp FROM cds_v2");
+$sql_efp->execute();
+$efp = $sql_efp->fetchAll(PDO::FETCH_ASSOC);
+
+$sql_filiere = $dbh->query("SELECT DISTINCT filiere FROM cds_v2");
+$sql_filiere->execute();
+$filiere = $sql_filiere->fetchAll(PDO::FETCH_ASSOC);
+
 if (isset($_POST['chercher'])) {
   $dd = $_POST['dd'];
   $ff = $_POST['df'];
+  $formation = !empty($_POST['formation']) ? $_POST['formation'] : null;
+  $niveau = !empty($_POST['niveau']) ? $_POST['niveau'] : null;
+  $efp = !empty($_POST['efp']) ? $_POST['efp'] : null;
+  $filiere = !empty($_POST['filiere']) ? $_POST['filiere'] : null;
 
-  $fp = $dbh->prepare("SELECT COUNT(*) as p FROM facture_payer WHERE facture = 1 AND date_payment BETWEEN :dd AND :ff");
-  $fp->bindParam(':dd', $dd);
-  $fp->bindParam(':ff', $ff);
-  $fp->execute();
+  // Construire la requête de base
+  $query = "SELECT 
+      SUM(prevu) as total_prevu,
+      SUM(stagiaires) as total_stagiaires,
+      SUM(actif) as total_actif,
+      SUM(transfert) as total_transfert,
+      SUM(desistement) as total_desistement,
+      SUM(redoublement) as total_redoublement
+  FROM cds_v2 
+  WHERE date_creation BETWEEN :dd AND :ff";
 
-  $fnp = $dbh->prepare("SELECT COUNT(*) as np FROM rest_payer WHERE payer = 0 AND facture = 1 AND date BETWEEN :dd AND :ff");
-  $fnp->bindParam(':dd', $dd);
-  $fnp->bindParam(':ff', $ff);
-  $fnp->execute();
+  // Ajouter les conditions de filtrage si elles sont définies
+  $params = [':dd' => $dd, ':ff' => $ff];
 
-  if ($fp->rowCount() > 0 && $fnp->rowCount() > 0) {
-    $p1 = $fp->fetch();
-    $p = $p1['p'];
-
-    $p2 = $fnp->fetch();
-    $np = $p2['np'];
-  } else {
-    $p = 0;
-    $np = 0;
+  if ($formation) {
+    $query .= " AND type_formation = :formation";
+    $params[':formation'] = $formation;
+  }
+  if ($niveau) {
+    $query .= " AND niveau = :niveau";
+    $params[':niveau'] = $niveau;
+  }
+  if ($efp) {
+    $query .= " AND efp = :efp";
+    $params[':efp'] = $efp;
+  }
+  if ($filiere) {
+    $query .= " AND filiere = :filiere";
+    $params[':filiere'] = $filiere;
   }
 
-  // Le total des Demande de prix 
-  $query_nbr_dmd_prix2 = mysqli_query($con, "SELECT * FROM demande_prix WHERE date BETWEEN '$dd' AND '$ff' ");
-  $nbr_t2 = mysqli_num_rows($query_nbr_dmd_prix2);
+  // Préparer et exécuter la requête
+  $stmt = $dbh->prepare($query);
+  $stmt->execute($params);
+  $results = $stmt->fetch(PDO::FETCH_ASSOC);
 
-  // Le total des prix demandé
-  $query_somme_total2 = mysqli_query($con, "SELECT SUM(montant)  AS total_montant FROM  `demande_prix` WHERE date BETWEEN '$dd' AND '$ff' ");
-  $t_mnt2 = mysqli_fetch_assoc($query_somme_total2);
-  $total_montant2 = $t_mnt2['total_montant'];
+  // Stocker les résultats dans des variables
+  $total_prevu = $results['total_prevu'] ?? 0;
+  $total_stagiaires = $results['total_stagiaires'] ?? 0;
+  $total_actif = $results['total_actif'] ?? 0;
+  $total_transfert = $results['total_transfert'] ?? 0;
+  $total_desistement = $results['total_desistement'] ?? 0;
+  $total_redoublement = $results['total_redoublement'] ?? 0;
 
-  $query_nbr_budget_dr2 = mysqli_query($con, "SELECT * FROM `budget_dr` WHERE date BETWEEN '$dd' AND '$ff' ");
-  $nbr_budget_dr2 = mysqli_num_rows($query_nbr_budget_dr2);
 } else {
-  // Par défaut, afficher les résultats sans filtrage par date
-  $fp_default = $dbh->query("SELECT COUNT(*) as p FROM facture_payer WHERE facture = 1");
-  $fnp_default = $dbh->query("SELECT COUNT(*) as np FROM rest_payer WHERE payer = 0 AND facture = 1 ");
+  // Requête par défaut sans filtrage par date
+  $query_default = "SELECT 
+      SUM(prevu) as total_prevu,
+      SUM(stagiaires) as total_stagiaires,
+      SUM(actif) as total_actif,
+      SUM(transfert) as total_transfert,
+      SUM(desistement) as total_desistement,
+      SUM(redoublement) as total_redoublement
+  FROM cds_v2";
 
-  if ($fp_default->rowCount() > 0 && $fnp_default->rowCount() > 0) {
-    $p1 = $fp_default->fetch();
-    $p = $p1['p'];
+  $stmt_default = $dbh->query($query_default);
+  $results_default = $stmt_default->fetch(PDO::FETCH_ASSOC);
 
-    $p2 = $fnp_default->fetch();
-    $np = $p2['np'];
-  } else {
-    $p = 0;
-    $np = 0;
-  }
+  // Stocker les résultats par défaut
+  $total_prevu = $results_default['total_prevu'] ?? 0;
+  $total_stagiaires = $results_default['total_stagiaires'] ?? 0;
+  $total_actif = $results_default['total_actif'] ?? 0;
+  $total_transfert = $results_default['total_transfert'] ?? 0;
+  $total_desistement = $results_default['total_desistement'] ?? 0;
+  $total_redoublement = $results_default['total_redoublement'] ?? 0;
 }
 ?>
 
@@ -140,14 +179,6 @@ if (isset($_POST['chercher'])) {
                 <label for="df" class="form-label text-muted">Sélectionner la Date De Fin</label>
                 <input type="date" class="form-control" id="df" name="df" placeholder="Prenom" required value="2025-02-12">
               </div>
-              <!-- <div class="form-group col-md-3 d-flex align-items-center">
-                <button type="submit" name="chercher" class="btn btn-link text-blue" style="display: flex; align-items: center; padding: 0;">
-                  <i class="fa fa-search" style="margin-right: 5px;"></i> Chercher
-                </button>
-                <button type="submit" name="chercher1" class="btn btn-link text-blue" style="display: flex; align-items: center; padding: 0;">
-                  <i class="fa fa-search" style="margin-right: 5px;"></i> Afficher tous
-                </button>
-              </div> -->
             </div>
             <script>
               // Obtenez la balise input type date par son ID
@@ -164,92 +195,42 @@ if (isset($_POST['chercher'])) {
             <div class="row">
               <div class="col-lg-3 col-12 mb-3 mb-lg-0">
                 <label for="formation" class="form-label text-muted">Chercher Par Formation</label>
-                <select class="form-select form-select-sm" id="formation" aria-label="Formation">
-                  <option value="">Sélectionner une formation</option>
-                  <option value="qualifiante">Formation Qualifiante</option>
-                  <option value="diplomante">Formation Diplômante</option>
-                </select>
-              </div>
-              <div class="col-lg-3 col-12 mb-3 mb-lg-0">
-                <label for="formation" class="form-label text-muted">Chercher Par Formation</label>
-                <input class="form-control" list="europe-countries" placeholder="Start typing...">
-                <datalist id="europe-countries">
-                  <option>Russia</option>
-                  <option>Germany</option>
-                  <option>United Kingdom</option>
-                  <option>France</option>
-                  <option>Italy</option>
-                  <option>Spain</option>
-                  <option>Ukraine</option>
-                  <option>Poland</option>
-                  <option>Romania</option>
-                  <option>Netherlands</option>
-                  <option>Belgium</option>
-                  <option>Czech Republic</option>
-                  <option>Greece</option>
-                  <option>Portugal</option>
-                  <option>Sweden</option>
-                  <option>Hungary</option>
-                  <option>Belarus</option>
-                  <option>Austria</option>
-                  <option>Serbia</option>
-                  <option>Switzerland</option>
-                  <option>Bulgaria</option>
-                  <option>Denmark</option>
-                  <option>Finland</option>
-                  <option>Slovakia</option>
-                  <option>Norway</option>
-                  <option>Ireland</option>
-                  <option>Croatia</option>
-                  <option>Moldova</option>
-                  <option>Bosnia and Herzegovina</option>
-                  <option>Albania</option>
-                  <option>Lithuania</option>
-                  <option>North Macedonia</option>
-                  <option>Slovenia</option>
-                  <option>Latvia</option>
-                  <option>Estonia</option>
-                  <option>Montenegro</option>
-                  <option>Luxembourg</option>
-                  <option>Malta</option>
-                  <option>Iceland</option>
-                  <option>Andorra</option>
-                  <option>Monaco</option>
-                  <option>Liechtenstein</option>
-                  <option>San Marino</option>
-                  <option>Holy See</option>
+                <input class="form-control" name="formation" list="types_formation_datalist" placeholder="Formation">
+                <datalist id="types_formation_datalist">
+                  <?php foreach ($types_formation as $type_formation) { ?>
+                    <option><?= $type_formation['type_formation'] ?></option>
+                  <?php } ?>
                 </datalist>
               </div>
 
               <div class="col-lg-3 col-12 mb-3 mb-lg-0">
                 <label for="niveau" class="form-label text-muted">Niveau</label>
-                <select class="form-select form-select-sm" id="niveau" aria-label="Niveau">
-                  <option value="">Sélectionner un niveau</option>
-                  <option value="debutant">Débutant</option>
-                  <option value="intermediaire">Intermédiaire</option>
-                  <option value="avance">Avancé</option>
-                </select>
+                <input class="form-control" name="niveau" list="niveaux_datalist" placeholder="Niveau">
+                <datalist id="niveaux_datalist">
+                  <?php foreach ($niveau as $nive) { ?>
+                    <option><?= $nive['niveau'] ?></option>
+                  <?php } ?>
+                </datalist>
               </div>
 
               <div class="col-lg-3 col-12 mb-3 mb-lg-0">
                 <label for="efp" class="form-label text-muted">EFP</label>
-                <select class="form-select form-select-sm" id="efp" aria-label="EFP">
-                  <option value="">Sélectionner un EFP</option>
-                  <option value="efp1">EFP de Casablanca</option>
-                  <option value="efp2">EFP de Rabat</option>
-                  <option value="efp3">EFP de Marrakech</option>
-                </select>
+                <input class="form-control" name="efp" list="efps_datalist" placeholder="EFP">
+                <datalist id="efps_datalist">
+                  <?php foreach ($efp as $efp_value) { ?>
+                    <option><?= $efp_value['efp'] ?></option>
+                  <?php } ?>
+                </datalist>
               </div>
 
-              <div class="col-lg-3 col-12  mb-lg-0">
+              <div class="col-lg-3 col-12 mb-lg-0">
                 <label for="filiere" class="form-label text-muted">Filière</label>
-                <select class="form-select form-select-sm" id="filiere" aria-label="Filière">
-                  <option value="">Sélectionner une filière</option>
-                  <option value="informatique">Informatique</option>
-                  <option value="mecanique">Mécanique</option>
-                  <option value="electronique">Électronique</option>
-                  <option value="gestion">Gestion</option>
-                </select>
+                <input class="form-control" name="filiere" list="filieres_datalist" placeholder="Filiere">
+                <datalist id="filieres_datalist">
+                  <?php foreach ($filiere as $fil) { ?>
+                    <option><?= $fil['filiere'] ?></option>
+                  <?php } ?>
+                </datalist>
               </div>
               <div class="form-group col-md-3 d-flex justify-content-around align-items-center mt-5">
                 <button type="submit" name="chercher" class="btn btn-link text-blue" style="display: flex; align-items: center; padding: 0;">
@@ -392,12 +373,13 @@ if (isset($_POST['chercher'])) {
           </div>
           <div class="container-fluid bg-white shadow-sm mb-5 rounded p-4">
             <div class="row py-4 rounded">
+              <h1 class="text-center mb-5">Section Cours Du Soir</h1>
               <div class="col-lg-3 col-6">
                 <!-- small box -->
                 <div class="small-box bg-info">
                   <div class="inner">
-                    12
-                    <p>Le total des prix demandé</p>
+                    <?= $total_prevu ?>
+                    <p>Stagiaire Prévu</p>
                   </div>
                   <div class="icon">
                     <i class="fas fa-building"></i>
@@ -409,8 +391,8 @@ if (isset($_POST['chercher'])) {
                 <!-- small box -->
                 <div class="small-box bg-info">
                   <div class="inner">
-                    12
-                    <p>Le total des prix demandé</p>
+                    <?= $total_stagiaires ?>
+                    <p>Stagiaire Inscrit</p>
                   </div>
                   <div class="icon">
                     <i class="fas fa-building"></i>
@@ -422,8 +404,8 @@ if (isset($_POST['chercher'])) {
                 <!-- small box -->
                 <div class="small-box bg-info">
                   <div class="inner">
-                    12
-                    <p>Le total des prix demandé</p>
+                    <?= $total_actif ?>
+                    <p>Stagiaire Actif</p>
                   </div>
                   <div class="icon">
                     <i class="fas fa-building"></i>
@@ -435,8 +417,8 @@ if (isset($_POST['chercher'])) {
                 <!-- small box -->
                 <div class="small-box bg-info">
                   <div class="inner">
-                    12
-                    <p>Le total des prix demandé</p>
+                    <?= $total_desistement ?>
+                    <p>Stagiaire Desistement</p>
                   </div>
                   <div class="icon">
                     <i class="fas fa-building"></i>
@@ -445,11 +427,13 @@ if (isset($_POST['chercher'])) {
                 </div>
               </div>
 
-              <div class="col-lg-6 col-12">
-                <div id="chart-spline" style="width: 100%; height: 400px;"></div>
+              <div class="col-lg-6 col-12 mt-lg-5 mt-0">
+                <div id="container" style="width: 100%; height: 400px;"></div>
               </div>
-              <div class="col-lg-6 col-12">
-                <div id="chart-pie" style="width: 100%; height: 400px;"></div>
+              <div class="col-lg-6 col-12 mt-lg-5 mt-0">
+                <figure class="highcharts-figure">
+                  <div id="container2"></div>
+                </figure>
               </div>
             </div>
           </div>
@@ -471,6 +455,194 @@ if (isset($_POST['chercher'])) {
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
+    <!-- PieChartAnimation 1-->
+    <script>
+      Highcharts.chart('container', {
+        chart: {
+          type: 'bar'
+        },
+        title: {
+          text: 'Historic World Population by Region'
+        },
+        subtitle: {
+          text: 'Source: <a ' +
+            'href="https://en.wikipedia.org/wiki/List_of_continents_and_continental_subregions_by_population"' +
+            'target="_blank">Wikipedia.org</a>'
+        },
+        xAxis: {
+          categories: ['Prevu', 'Inscription', 'Actif', 'Desistement', 'Deperdition'],
+          title: {
+            text: null
+          },
+          gridLineWidth: 1,
+          lineWidth: 0
+        },
+        yAxis: {
+          min: 0,
+          title: {
+            text: 'Population (millions)',
+            align: 'high'
+          },
+          labels: {
+            overflow: 'justify'
+          },
+          gridLineWidth: 0
+        },
+        tooltip: {
+          valueSuffix: ' Stagiaires'
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: '50%',
+            dataLabels: {
+              enabled: true
+            },
+            groupPadding: 0.1
+          }
+        },
+        legend: {
+          layout: 'vertical',
+          align: 'right',
+          verticalAlign: 'top',
+          x: -40,
+          y: 80,
+          floating: true,
+          borderWidth: 1,
+          backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
+          shadow: true
+        },
+        credits: {
+          enabled: false
+        },
+        series: [{
+          name: 'Year 1990',
+          data: [632, 727, 3202, 721, 100]
+        }, {
+          name: 'Year 2000',
+          data: [814, 841, 3714, 726, 100]
+        }, {
+          name: 'Year 2021',
+          data: [
+            <?= $total_prevu ?>,
+            <?= $total_stagiaires ?>,
+            <?= $total_actif ?>,
+            <?= $total_desistement ?>,
+            <?= $total_redoublement ?>
+          ]
+        }]
+      });
+    </script>
+
+    <!-- PieChartAnimation 2-->
+    <script>
+      Highcharts.chart('container2', {
+        chart: {
+          type: 'pie',
+          custom: {},
+          events: {
+            render() {
+              const chart = this,
+                series = chart.series[0];
+              let customLabel = chart.options.chart.custom.label;
+
+              if (!customLabel) {
+                customLabel = chart.options.chart.custom.label =
+                  chart.renderer.label(
+                    'Prévu<br/>' +
+                    '<strong><?php echo $total_prevu ?></strong>'
+                  )
+                  .css({
+                    color: '#000',
+                    textAnchor: 'middle',
+                    fontWeight: 'bold'
+                  })
+                  .add();
+              }
+
+              const x = series.center[0] + chart.plotLeft,
+                y = series.center[1] + chart.plotTop -
+                (customLabel.attr('height') / 2);
+
+              customLabel.attr({
+                x,
+                y
+              });
+              customLabel.css({
+                fontSize: `${series.center[2] / 12}px`
+              });
+            }
+          }
+        },
+        accessibility: {
+          point: {
+            valueSuffix: '%'
+          }
+        },
+        title: {
+          text: 'Distribution des Stagiaires'
+        },
+        tooltip: {
+          pointFormat: '{series.name}: <b>{point.y}</b> ({point.percentage:.1f}%)'
+        },
+        legend: {
+          enabled: false
+        },
+        plotOptions: {
+          series: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            borderRadius: 8,
+            dataLabels: [{
+              enabled: true,
+              distance: 20,
+              format: '{point.name}'
+            }, {
+              enabled: true,
+              distance: -35,
+              format: '{point.y}<br>{point.percentage:.0f}%',
+              style: {
+                fontSize: '0.9em',
+                textAlign: 'center',
+                fontWeight: 'bold'
+              },
+              filter: {
+                property: 'percentage',
+                operator: '>',
+                value: 4
+              }
+            }],
+            showInLegend: true
+          }
+        },
+        series: [{
+          name: 'Stagiaires',
+          colorByPoint: true,
+          innerSize: '75%',
+          data: [{
+            name: 'Inscription',
+            y: <?php echo $total_stagiaires ?>,
+            color: '#90ED7D'
+          }, {
+            name: 'Actifs',
+            y: <?php echo $total_actif ?>,
+            color: '#2ecc71'
+          }, {
+            name: 'Transferts',
+            y: <?php echo $total_transfert ?>,
+            color: '#f1c40f'
+          }, {
+            name: 'Désistements',
+            y: <?php echo $total_desistement ?>,
+            color: '#e74c3c'
+          }, {
+            name: 'Redoublements',
+            y: <?php echo $total_redoublement ?>,
+            color: '#3498db'
+          }]
+        }]
+      });
+    </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js" integrity="sha512-R/QOHLpV1Ggq22vfDAWYOaMd5RopHrJNMxi8/lJu8Oihwi4Ho4BRFeiMiCefn9rasajKjnx9/fTQ/xkWnkDACg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://unpkg.com/chart.js-plugin-labels-dv/dist/chartjs-plugin-labels.min.js"></script>
