@@ -353,7 +353,7 @@ if (isset($_GET['del'])) {
         var rowData = [];
         valueArray.forEach(function(value, index) {
 
-          if (index != 0 && index != 7) {
+          if (index != 0 && index != 16) {
             // rowData.push(value);
             // Vérifiez si la cellule contient une balise <a>
             if (/<a[^>]*>([^<]+)<\/a>/.test(value)) {

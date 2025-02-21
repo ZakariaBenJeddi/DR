@@ -5,7 +5,7 @@ session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
 if (isset($_POST['submit'])) {
-  $sid = $_SESSION['edid'];
+  $sid = $_POST['id'];
   $dep = $_POST['dep'];
   $dr = $_POST['dr'];
   $code_efp = $_POST['code_efp'];
@@ -24,46 +24,51 @@ if (isset($_POST['submit'])) {
 
   $sql = "UPDATE cds_v2 SET 
         dep=:dep,
-        -- dr=:dr,
-        -- code_efp=:code_efp,
-        -- efp=:efp,
-        -- niveau=:niveau,
-        -- code_filiere=:code_filiere,
-        -- filiere=:filiere,
-        -- type_formation=:type_formation,
-        -- prevu=:prevu,
-        -- annee_etude=:annee_etude,
-        -- stagiaires=:stagiaires,
-        -- actif=:actif,
-        -- transfert=:transfert,
-        -- desistement=:desistement,
-        -- redoublement=:redoublement
+        dr=:dr,
+        code_efp=:code_efp,
+        efp=:efp,
+        niveau=:niveau,
+        code_filiere=:code_filiere,
+        filiere=:filiere,
+        type_formation=:type_formation,
+        prevu=:prevu,
+        annee_etude=:annee_etude,
+        stagiaires=:stagiaires,
+        actif=:actif,
+        transfert=:transfert,
+        desistement=:desistement,
+        redoublement=:redoublement
         WHERE id=:sid";
 
   $query = $dbh->prepare($sql);
   $query->bindParam(':dep', $dep);
-  // $query->bindParam(':dr', $dr);
-  // $query->bindParam(':code_efp', $code_efp);
-  // $query->bindParam(':efp', $efp);
-  // $query->bindParam(':niveau', $niveau);
-  // $query->bindParam(':code_filiere', $code_filiere);
-  // $query->bindParam(':filiere', $filiere);
-  // $query->bindParam(':type_formation', $type_formation);
-  // $query->bindParam(':prevu', $prevu);
-  // $query->bindParam(':annee_etude', $annee_etude);
-  // $query->bindParam(':stagiaires', $stagiaires);
-  // $query->bindParam(':actif', $actif);
-  // $query->bindParam(':transfert', $transfert);
-  // $query->bindParam(':desistement', $desistement);
-  // $query->bindParam(':redoublement', $redoublement);
+  $query->bindParam(':dr', $dr);
+  $query->bindParam(':code_efp', $code_efp);
+  $query->bindParam(':efp', $efp);
+  $query->bindParam(':niveau', $niveau);
+  $query->bindParam(':code_filiere', $code_filiere);
+  $query->bindParam(':filiere', $filiere);
+  $query->bindParam(':type_formation', $type_formation);
+  $query->bindParam(':prevu', $prevu);
+  $query->bindParam(':annee_etude', $annee_etude);
+  $query->bindParam(':stagiaires', $stagiaires);
+  $query->bindParam(':actif', $actif);
+  $query->bindParam(':transfert', $transfert);
+  $query->bindParam(':desistement', $desistement);
+  $query->bindParam(':redoublement', $redoublement);
   $query->bindParam(':sid', $sid);
 
-  if ($query->execute()) {
-    echo "<script>alert('mise à jour réussie.');</script>";
-    echo "<script>window.location.href ='cds_v2.php'</script>";
-  } else {
-    echo "<script>alert('Quelque chose c'est mal passé. Merci d'essayer plus tard');</script>";
-  }
+  try {
+    if ($query->execute()) {
+        echo "<script>alert('Mise à jour réussie.');</script>";
+        echo "<script>window.location.href ='cds_v2.php'</script>";
+    } else {
+        echo "<script>alert('Une erreur s'est produite lors de l'importation.');</script>";
+    }
+} catch (PDOException $e) {
+    echo "Erreur SQL : " . $e->getMessage();
+}
+
 }
 ?>
 
@@ -79,39 +84,10 @@ if (isset($_POST['submit'])) {
         $ret = mysqli_query($con, "SELECT * FROM cds_v2 WHERE id=" . $eid);
         $cnt = 1;
         while ($row = mysqli_fetch_array($ret)) {
-          $_SESSION['edid'] = $row['idfour'];
+          $_SESSION['edid'] = $row['id'];
         ?>
-          <div class="col-md-3">
-            <!-- Profile Image -->
-            <div class="card card-primary card-outline">
-              <div class="card-body box-profile">
-                <div class="text-center">
-                  <img class="img-circle" src="fournisseur_img/<?php echo $row['imgefour'] ?>" width="150" height="150" class="user-image" alt="User profile picture">
-                </div>
-
-                <h3 class="profile-username text-center"><?php echo $row['raison_sociale']; ?> </h3>
-
-
-
-                <p class="text-muted text-center"><strong></strong></p>
-
-                <ul class="list-group list-group-unbordered mb-3">
-                  <li class="list-group-item">
-                    <b>Email</b> <a class="float-right"><?php echo $row['email']; ?></a>
-                  </li>
-                  <li class="list-group-item">
-                    <b>Fix</b> <a class="float-right"><?php echo $row['fix']; ?> </a>
-                  </li>
-
-                </ul>
-
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-          </div>
           <!-- /.col -->
-          <div class="col-md-9">
+          <div class="col-md-12">
             <div class="card">
               <div class="card-header p-2">
                 <ul class="nav nav-pills">
@@ -123,10 +99,14 @@ if (isset($_POST['submit'])) {
                 <div class="tab-content">
                   <div class="active tab-pane" id="for_info">
                     <form enctype="multipart/form-data" method="post">
+                      <?php
+                        $iddd =  $row['id'] ;
+                      ?>
                       <div class="row">
                         <div class="col-md-4">
                           <div class="form-group">
                             <label for="dep">DEPARTEMENT</label>
+                            <input readonly hidden name="id" id="id" value="<?php echo $_SESSION['edid']; ?>">
                             <input class="form-control" name="dep" id="dep" value="<?php echo $row['dep']; ?>" required>
                           </div>
                         </div>

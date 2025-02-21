@@ -365,11 +365,9 @@ if (isset($_POST['chercher'])) {
               </div>
               <?php if (!empty($messages)) : ?>
                 <div class="col-12 alert alert-warning text-white">
-                  <ul>
+                  <ul style="list-style-type: disc;">
                     <?php foreach ($messages as $message) : ?>
-                      <ul>
-                        <?php echo $message; ?>
-                      </ul>
+                      <li ><?php echo $message; ?></li>
                     <?php endforeach; ?>
                   </ul>
                 </div>
