@@ -9,7 +9,7 @@ if (strlen($_SESSION['sid'] == 0)) {
 
 
 if (isset($_GET['del'])) {
-  mysqli_query($con, "DELETE FROM cds_v2 WHERE id = '" . $_GET['id'] . "'");
+  mysqli_query($con, "DELETE FROM cdj_v2 WHERE id = '" . $_GET['id'] . "'");
 }
 ?>
 <!DOCTYPE html>
@@ -63,7 +63,7 @@ if (isset($_GET['del'])) {
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="dash_dr.php">Accueil</a></li>
-                <li class="breadcrumb-item active">Cours Du Soir</li>
+                <li class="breadcrumb-item active">Cours Du Jour</li>
               </ol>
             </div>
           </div>
@@ -112,9 +112,9 @@ if (isset($_GET['del'])) {
             <div class="col-12">
               <div class="card">
                 <div class="card-header">
-                  <h3 class="card-title">Gérer les Cours Du Soir</h3>
+                  <h3 class="card-title">Gérer les Cours Du Jour</h3>
                   <div class="card-tools">
-                    <a href="Add_CDS.php"><button type="button" class="btn btn-sm btn-primary"><span style="color: #fff;"><i class="fas fa-plus"></i>&nbsp;Cours Du Soir</span>
+                    <a href="Add_CDJ.php"><button type="button" class="btn btn-sm btn-primary"><span style="color: #fff;"><i class="fas fa-plus"></i>&nbsp;Cours Du Jour</span>
                       </button></a>
                     <button type="button" class="btn btn-sm btn-primary mx-2" onclick="expo()" id='btnexp'>
                       <span style="color: #fff;"><i class="fas fa-download"></i> Exporter</span>
@@ -130,7 +130,7 @@ if (isset($_GET['del'])) {
                   <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title">Détails Cours Du Soir</h5>
+                        <h5 class="modal-title">Détails Cours Du Jour</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                         </button>
@@ -154,7 +154,7 @@ if (isset($_GET['del'])) {
                   <div class="modal-dialog ">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title">Détails Cours Du Soir</h5>
+                        <h5 class="modal-title">Détails Cours Du Jour</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                         </button>
@@ -192,18 +192,19 @@ if (isset($_GET['del'])) {
                           <th>Transfert</th>
                           <th>Desistant</th>
                           <th>Redoublent</th>
+                          <th>Passerelle</th>
                           <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <?php $query = mysqli_query($con, "SELECT * FROM cds_v2  WHERE DATE_FORMAT(date_creation,'%Y-%m') >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),'%Y-%m');");
+                        <?php $query = mysqli_query($con, "SELECT * FROM cdj_v2  WHERE DATE_FORMAT(date_creation,'%Y-%m') >= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),'%Y-%m');");
                         if (isset($_POST['chercher'])) {
                           $dd = $_POST['dd'];
                           $ff = $_POST['df'];
-                          $query = mysqli_query($con, "SELECT * FROM cds_v2  WHERE date_creation between '$dd' and '$ff'");
+                          $query = mysqli_query($con, "SELECT * FROM cdj_v2  WHERE date_creation between '$dd' and '$ff'");
                         }
                         if (isset($_POST['cht'])) {
-                          $query = mysqli_query($con, "SELECT * FROM cds_v2");
+                          $query = mysqli_query($con, "SELECT * FROM cdj_v2");
                         }
                         $cnt = 1;
                         while ($row = mysqli_fetch_array($query)) {
@@ -226,6 +227,7 @@ if (isset($_GET['del'])) {
                             <td><?php echo htmlentities($row['transfert']); ?></td>
                             <td><?php echo htmlentities($row['desistement']); ?></td>
                             <td><?php echo htmlentities($row['redoublement']); ?></td>
+                            <td><?php echo htmlentities($row['passerelle']); ?></td>
                             <td>
                               <button class=" btn btn-primary btn-xs edit_data" id="<?php echo  $row['id']; ?>" title="click for edit">Modifier</i></button>
                               <button class=" btn btn-success btn-xs edit_data2" id="<?php echo  $row['id']; ?>" title="click for edit">Voir</i></button>
@@ -280,7 +282,7 @@ if (isset($_GET['del'])) {
           .then(data => {
             alert(data.message);
             if (data.success) {
-              window.location.href = 'cds_v2.php';
+              window.location.href = 'cdj_v2.php';
             }
           })
           .catch(error => {

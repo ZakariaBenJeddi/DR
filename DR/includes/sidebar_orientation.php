@@ -72,6 +72,12 @@
           </a>
         </li>
         <li class="nav-item">
+          <a href="cdj_v2.php" class="nav-link">
+            <i class="fa-solid fa-folder-open"></i>
+            <p>CDJ V2</p>
+          </a>
+        </li>
+        <li class="nav-item">
           <a href="cds_v2.php" class="nav-link">
             <i class="fa-solid fa-folder-open"></i>
             <p>CDS V2</p>
