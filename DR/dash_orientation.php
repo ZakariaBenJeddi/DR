@@ -93,7 +93,6 @@ if (isset($_POST['chercher'])) {
   $total_transfert = $results['total_transfert'] ?? 0;
   $total_desistement = $results['total_desistement'] ?? 0;
   $total_redoublement = $results['total_redoublement'] ?? 0;
-
 } else {
   // Requête par défaut sans filtrage par date
   $query_default = "SELECT 
@@ -115,6 +114,43 @@ if (isset($_POST['chercher'])) {
   $total_transfert = $results_default['total_transfert'] ?? 0;
   $total_desistement = $results_default['total_desistement'] ?? 0;
   $total_redoublement = $results_default['total_redoublement'] ?? 0;
+
+
+
+  // messages
+
+  $messages = [];
+
+  // 1. Nombre d'actifs très inférieur au nombre d'inscriptions
+  if ($total_actif < ($total_stagiaires * 0.5)) {
+    $messages[] = "Attention : le nombre d'actifs ($total_actif) est très inférieur au nombre d'inscriptions ($total_stagiaires). Vérifiez les données.";
+  }
+
+  // 2. Désistements élevés
+  if ($total_desistement > ($total_stagiaires * 0.3)) {
+    $messages[] = "Le taux de désistement est élevé : $total_desistement désistements sur $total_stagiaires inscrits. Analysez les raisons possibles.";
+  }
+
+  // 3. Redoublements anormalement élevés
+  if ($total_redoublement > ($total_stagiaires * 0.2)) {
+    $messages[] = "Un nombre important de redoublements a été détecté : $total_redoublement redoublements. Une enquête est nécessaire.";
+  }
+
+  // 4. Transferts supérieurs aux actifs
+  if ($total_transfert > $total_actif) {
+    $messages[] = "Incohérence détectée : plus de transferts ($total_transfert) que de stagiaires actifs ($total_actif).";
+  }
+
+  // 5. Nombre de stagiaires supérieur au prévu
+  if ($total_stagiaires > ($total_prevu * 1.2)) {
+    $messages[] = "Le nombre de stagiaires inscrits ($total_stagiaires) dépasse largement la capacité prévue ($total_prevu). Risque de surcharge détecté.";
+  }
+
+  // 6. Vérification de l'équilibre des données
+  $total_calculated = $total_actif + $total_desistement + $total_redoublement + $total_transfert;
+  if ($total_calculated != $total_stagiaires) {
+    $messages[] = "Déséquilibre détecté : la somme des actifs ($total_actif), désistements ($total_desistement), redoublements ($total_redoublement) et transferts ($total_transfert) ne correspond pas au nombre total d'inscrits ($total_stagiaires).";
+  }
 }
 ?>
 
@@ -327,11 +363,25 @@ if (isset($_POST['chercher'])) {
                   <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
               </div>
+              <?php if (!empty($messages)) : ?>
+                <div class="col-12 alert alert-warning text-white">
+                  <ul>
+                    <?php foreach ($messages as $message) : ?>
+                      <ul>
+                        <?php echo $message; ?>
+                      </ul>
+                    <?php endforeach; ?>
+                  </ul>
+                </div>
+              <?php endif; ?>
 
-              <div class="col-lg-6 col-12 mt-lg-5 mt-0">
+              <div class="col-lg-4 col-12 mt-lg-5 mt-0">
                 <div id="container" style="width: 100%; height: 400px;"></div>
               </div>
-              <div class="col-lg-6 col-12 mt-lg-5 mt-0">
+              <div class="col-lg-4 col-12 mt-lg-5 mt-0">
+                <div id="container3" style="width: 100%; height: 400px;"></div>
+              </div>
+              <div class="col-lg-4 col-12 mt-lg-5 mt-0">
                 <figure class="highcharts-figure">
                   <div id="container2"></div>
                 </figure>
@@ -430,6 +480,49 @@ if (isset($_POST['chercher'])) {
       });
     </script>
 
+    <!-- PieChartAnimation 3-->
+    <script>
+      Highcharts.chart('container3', {
+        chart: {
+          type: 'column'
+        },
+        title: {
+          text: 'Prévu vs Inscription'
+        },
+        xAxis: {
+          categories: ['Stagiaires'],
+          crosshair: true,
+          accessibility: {
+            description: 'Countries'
+          }
+        },
+        yAxis: {
+          min: 0,
+          title: {
+            text: 'Prévu / Inscription'
+          }
+        },
+        tooltip: {
+          valueSuffix: 'Stagiaires'
+        },
+        plotOptions: {
+          column: {
+            pointPadding: 0.2,
+            borderWidth: 0
+          }
+        },
+        series: [{
+            name: 'Prévu',
+            data: [<?php echo $total_prevu ?>]
+          },
+          {
+            name: 'Inscription',
+            data: [<?php echo $total_stagiaires ?>]
+          }
+        ]
+      });
+    </script>
+
     <!-- PieChartAnimation 2-->
     <script>
       Highcharts.chart('container2', {
@@ -445,8 +538,8 @@ if (isset($_POST['chercher'])) {
               if (!customLabel) {
                 customLabel = chart.options.chart.custom.label =
                   chart.renderer.label(
-                    'Prévu<br/>' +
-                    '<strong><?php echo $total_prevu ?></strong>'
+                    '<div style="font-size:14px">Prévu : <strong><?php echo $total_prevu ?></strong></br>' +
+                    'Inscription : <strong><?php echo $total_stagiaires ?></strong></div>'
                   )
                   .css({
                     color: '#000',
@@ -516,13 +609,10 @@ if (isset($_POST['chercher'])) {
           colorByPoint: true,
           innerSize: '75%',
           data: [{
-            name: 'Inscription',
-            y: <?php echo $total_stagiaires ?>,
-            color: '#90ED7D'
-          }, {
             name: 'Actifs',
             y: <?php echo $total_actif ?>,
-            color: '#2ecc71'
+            // color: '#2ecc71'
+            color: (<?php echo $total_actif ?> / <?php echo $total_stagiaires ?> * 100 < 50) ? '#f1c40f' : (<?php echo $total_actif ?> / <?php echo $total_stagiaires ?> * 100 < 94) ? '#3498db' : '#2ecc71'
           }, {
             name: 'Transferts',
             y: <?php echo $total_transfert ?>,
