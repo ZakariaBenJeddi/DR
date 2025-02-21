@@ -231,7 +231,7 @@ if (isset($_GET['del'])) {
                             <td>
                               <button class=" btn btn-primary btn-xs edit_data" id="<?php echo  $row['id']; ?>" title="click for edit">Modifier</i></button>
                               <button class=" btn btn-success btn-xs edit_data2" id="<?php echo  $row['id']; ?>" title="click for edit">Voir</i></button>
-                              <a href="cds_v2.php?id=<?php echo $row['id'] ?>&del=delete" onClick="return confirm('Etes-vous sûr que vous voulez supprimer?')" class=" btn btn-danger btn-xs ">Supprimer</a>
+                              <a href="cdj_v2.php?id=<?php echo $row['id'] ?>&del=delete" onClick="return confirm('Etes-vous sûr que vous voulez supprimer?')" class=" btn btn-danger btn-xs ">Supprimer</a>
                             </td>
                           </tr>
                         <?php $cnt = $cnt + 1;
@@ -274,7 +274,7 @@ if (isset($_GET['del'])) {
         let formData = new FormData();
         formData.append("excel_file", file);
 
-        fetch("import_cds.php", {
+        fetch("import_cdj.php", {
             method: "POST",
             body: formData
           })
@@ -379,7 +379,7 @@ if (isset($_GET['del'])) {
       $(document).on('click', '.edit_data', function() {
         var edit_id = $(this).attr('id');
         $.ajax({
-          url: "Edit_cds.php",
+          url: "Edit_cdj.php",
           type: "post",
           data: {
             edit_id: edit_id

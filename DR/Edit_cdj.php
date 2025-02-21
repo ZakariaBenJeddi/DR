@@ -4,7 +4,7 @@ session_start();
 // try {
 error_reporting(0);
 include('includes/dbconnection.php');
-if (isset($_POST['ajout'])) {
+if (isset($_POST['ajouter'])) {
   $sid = $_POST['id'];
   $dep = $_POST['dep'];
   $dr = $_POST['dr'];
@@ -21,8 +21,9 @@ if (isset($_POST['ajout'])) {
   $transfert = $_POST['transfert'];
   $desistement = $_POST['desistement'];
   $redoublement = $_POST['redoublement'];
+  $passerelle = $_POST['passerelle'];
 
-  $sql = "UPDATE cds_v2 SET 
+  $sql = "UPDATE cdj_v2 SET 
         dep=:dep,
         dr=:dr,
         code_efp=:code_efp,
@@ -38,6 +39,7 @@ if (isset($_POST['ajout'])) {
         transfert=:transfert,
         desistement=:desistement,
         redoublement=:redoublement
+        passerelle=:passerelle
         WHERE id=:sid";
 
   $query = $dbh->prepare($sql);
@@ -56,12 +58,13 @@ if (isset($_POST['ajout'])) {
   $query->bindParam(':transfert', $transfert);
   $query->bindParam(':desistement', $desistement);
   $query->bindParam(':redoublement', $redoublement);
+  $query->bindParam(':passerelle', $passerelle);
   $query->bindParam(':sid', $sid);
 
   try {
     if ($query->execute()) {
         echo "<script>alert('Mise à jour réussie.');</script>";
-        echo "<script>window.location.href ='cds_v2.php'</script>";
+        echo "<script>window.location.href ='cdj_v2.php'</script>";
     } else {
         echo "<script>alert('Une erreur s'est produite lors de l'importation.');</script>";
     }
@@ -81,7 +84,7 @@ if (isset($_POST['ajout'])) {
       <div class="row">
         <?php
         $eid = intval($_POST['edit_id']);
-        $ret = mysqli_query($con, "SELECT * FROM cds_v2 WHERE id=" . $eid);
+        $ret = mysqli_query($con, "SELECT * FROM cdj_v2 WHERE id=" . $eid);
         $cnt = 1;
         while ($row = mysqli_fetch_array($ret)) {
           $_SESSION['edid'] = $row['id'];
@@ -212,10 +215,16 @@ if (isset($_POST['ajout'])) {
                           </div>
                         </div>
 
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label for="passerelle">Passerelle</label>
+                            <input class="form-control" name="passerelle" id="passerelle" value="<?php echo $row['passerelle']; ?>" required>
+                          </div>
+                        </div>
+
                         <div>
                           <div class="modal-footer text-right">
-                            <!-- <button type="submit" name="submit" class="btn btn-primary">Mettre à jour</button> -->
-                            <input type="submit" name="ajout" value="Submit" class="btn btn-primary" >
+                            <input type="submit" name="ajouter" value="Submit" class="btn btn-primary" >
                           </div>
                     </form>
                   </div>
