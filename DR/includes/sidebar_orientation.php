@@ -17,7 +17,7 @@
       }
       ?>
     style="opacity: .8">
-    <span class="brand-text font-weight-light">Gestion Comptabilite</span>
+    <span class="brand-text font-weight-light">SRIO</span>
   </a>
 
   <!-- Sidebar -->

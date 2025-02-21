@@ -33,6 +33,10 @@ $sql_filiere = $dbh->query("SELECT DISTINCT filiere FROM cds_v2");
 $sql_filiere->execute();
 $filiere = $sql_filiere->fetchAll(PDO::FETCH_ASSOC);
 
+$sql_annee_etude = $dbh->query("SELECT DISTINCT annee_etude FROM cds_v2");
+$sql_annee_etude->execute();
+$annee_etude = $sql_annee_etude->fetchAll(PDO::FETCH_ASSOC);
+
 if (isset($_POST['chercher'])) {
   $dd = $_POST['dd'];
   $ff = $_POST['df'];
@@ -40,6 +44,7 @@ if (isset($_POST['chercher'])) {
   $niveau = !empty($_POST['niveau']) ? $_POST['niveau'] : null;
   $efp = !empty($_POST['efp']) ? $_POST['efp'] : null;
   $filiere = !empty($_POST['filiere']) ? $_POST['filiere'] : null;
+  $annee_etude = !empty($_POST['annee_etude']) ? $_POST['annee_etude'] : null;
 
   // Construire la requête de base
   $query = "SELECT 
@@ -70,6 +75,10 @@ if (isset($_POST['chercher'])) {
   if ($filiere) {
     $query .= " AND filiere = :filiere";
     $params[':filiere'] = $filiere;
+  }
+  if ($annee_etude) {
+    $query .= " AND annee_etude = :annee_etude";
+    $params[':annee_etude'] = $annee_etude;
   }
 
   // Préparer et exécuter la requête
@@ -232,13 +241,24 @@ if (isset($_POST['chercher'])) {
                   <?php } ?>
                 </datalist>
               </div>
-              <div class="form-group col-md-3 d-flex justify-content-around align-items-center mt-5">
-                <button type="submit" name="chercher" class="btn btn-link text-blue" style="display: flex; align-items: center; padding: 0;">
-                  <i class="fa fa-search" style="margin-right: 5px;"></i> Chercher
-                </button>
-                <button type="submit" name="chercher1" class="btn btn-link text-blue" style="display: flex; align-items: center; padding: 0;">
-                  <i class="fa fa-search" style="margin-right: 5px;"></i> Afficher tous
-                </button>
+              <div class="col-lg-3 col-12 mb-lg-0">
+                <label for="filiere" class="form-label text-muted">Annee Etude</label>
+                <input class="form-control" name="annee_etude" list="annee_etude_datalist" placeholder="Annee Etude">
+                <datalist id="annee_etude_datalist">
+                  <?php foreach ($annee_etude as $ann_etu) { ?>
+                    <option><?= $ann_etu['annee_etude'] ?></option>
+                  <?php } ?>
+                </datalist>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-3 d-flex justify-content-around align-items-center mt-5">
+                  <button type="submit" name="chercher" class="btn bg-blue text-white rounded-sm p-1" style="display: flex; align-items: center;">
+                    <i class="fa fa-search" style="margin-right: 5px;"></i> Chercher
+                  </button>
+                  <button type="submit" name="chercher1" class="btn bg-blue text-white rounded-sm p-1" style="display: flex; align-items: center;">
+                    <i class="fa fa-search" style="margin-right: 5px;"></i> Afficher tous
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -249,128 +269,9 @@ if (isset($_POST['chercher'])) {
 
         <!-- Main content -->
         <section class="content bg-light">
-          <div class="container-fluid bg-white shadow-sm mb-5 rounded p-4">
-            <!-- Small boxes (Stat box) -->
-            <div class="row">
-              <div class="col-lg-4 col-6">
-                <!-- small box -->
-                <div class="small-box bg-info">
-                  <?php $query_nbr_dmd_prix = mysqli_query($con, "SELECT * FROM demande_prix WHERE date BETWEEN DATE_SUB(NOW(), INTERVAL 12 MONTH) and NOW()");
-                  if (isset($_POST['chercher1'])) {
-                    $query_nbr_dmd_prix = mysqli_query($con, "SELECT * FROM demande_prix ");
-                  }
-                  $nbr_t = mysqli_num_rows($query_nbr_dmd_prix);
-                  ?>
-                  <div class="inner">
-                    <?php
-                    if ($nbr_t2) { ?>
-                      <h3><?php echo $nbr_t2; ?></h3><?php
-                                                    } else { ?>
-                      <h3><?php echo $nbr_t; ?></h3><?php
-                                                    }
-                                                    ?>
-                    <p>Taux d'inscription</p>
-                  </div>
-
-                  <div class="icon">
-                    <i class="price-icon fa fa-chalkboard-teacher"></i>
-                  </div>
-                  <a href="list_demande_prix.php" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-              </div>
-              <div class="col-lg-4 col-6">
-                <!-- small box -->
-                <div class="small-box bg-info">
-                  <?php $query1 = mysqli_query($con, "SELECT SUM(montant)  AS total_montant FROM  `demande_prix` WHERE date BETWEEN DATE_SUB(NOW(), INTERVAL 12 MONTH) and NOW()");
-                  if (isset($_POST['chercher1'])) {
-                    $query1 = mysqli_query($con, "SELECT SUM(montant)  AS total_montant FROM  `demande_prix` ");
-                  }
-                  $t_mnt = mysqli_fetch_assoc($query1);
-                  $total_montant = $t_mnt['total_montant'];
-                  ?>
-                  <div class="inner">
-                    <?php
-                    if ($total_montant2) { ?>
-                      <h3><?php echo number_format($t_mnt2['total_montant'], 2, ',', ' ') . " DHs"; ?></h3><?php
-                                                                                                          } else { ?>
-                      <h3><?php echo number_format($t_mnt['total_montant'], 2, ',', ' ') . " DHs"; ?></h3><?php
-                                                                                                          }
-                                                                                                          ?>
-                    <p>Taux De presence</p>
-                  </div>
-
-                  <div class="icon">
-                    <i class="fas fa-building"></i>
-                  </div>
-                  <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-              </div>
-              <div class="col-lg-4 col-6">
-                <!-- small box -->
-                <div class="small-box bg-info">
-                  <?php $query1 = mysqli_query($con, "SELECT * FROM `budget_dr` WHERE date BETWEEN DATE_SUB(NOW(), INTERVAL 12 MONTH) and NOW()");
-                  if (isset($_POST['chercher1'])) {
-                    $query1 = mysqli_query($con, "SELECT * FROM `budget_dr` ");
-                  }
-                  $nbr_budget_dr = mysqli_num_rows($query1);
-                  ?>
-
-                  <div class="inner">
-                    <?php
-                    if ($nbr_budget_dr2) { ?>
-                      <h3>
-                        <?php echo $nbr_budget_dr2; ?>
-                      </h3>
-                    <?php } else { ?>
-                      <h3>
-                        <?php echo $nbr_budget_dr; ?>
-                      </h3>
-                    <?php } ?>
-                    <p>Le total des Budget dr</p>
-                  </div>
-
-                  <div class="icon">
-                    <i class="price-icon fa fa-dollar-sign"></i>
-                  </div>
-                  <a href="list_budget_dr.php" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-              </div>
-              <div class="col-lg-6 col-6">
-                <div class="small-box bg-danger">
-                  <div class="inner">
-                    <h3><?php echo $np; ?></h3>
-                    <p>Taux De Desistement</p>
-                  </div>
-                  <div class="icon">
-                    <i class="price-icon fa fa-dollar-sign"></i>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-6 col-6">
-                <div class="small-box bg-success">
-                  <div class="inner">
-                    <h3><?php echo $p; ?></h3>
-                    <p>Taux De Deperdition</p>
-                  </div>
-                  <div class="icon">
-                    <i class="price-icon fa fa-dollar-sign"></i>
-                  </div>
-                </div>
-              </div>
-              <!-- <div class="col-lg-4 col-6"></div> -->
-              <div class="col-lg-6 col-12">
-                <label for="taux_inscription" class="form-label text-muted">Facture</label>
-                <div style="width: 24rem; height: 24rem;">
-                  <canvas id="myPieChartXX"></canvas>
-                </div>
-              </div>
-              <div class="col-lg-6 col-12 mt-lg-0 mt-5">
-                <label for="taux_inscription" class="form-label text-muted">Taux D'inscription</label>
-                <div id="chart"></div>
-              </div>
-            </div>
-            <!-- /.row (main row) -->
-          </div>
+          <!-- <div class="container-fluid bg-white shadow-sm mb-5 rounded p-4">
+            row
+          </div> -->
           <div class="container-fluid bg-white shadow-sm mb-5 rounded p-4">
             <div class="row py-4 rounded">
               <h1 class="text-center mb-5">Section Cours Du Soir</h1>
@@ -465,11 +366,6 @@ if (isset($_POST['chercher'])) {
         title: {
           text: 'Historic World Population by Region'
         },
-        subtitle: {
-          text: 'Source: <a ' +
-            'href="https://en.wikipedia.org/wiki/List_of_continents_and_continental_subregions_by_population"' +
-            'target="_blank">Wikipedia.org</a>'
-        },
         xAxis: {
           categories: ['Prevu', 'Inscription', 'Actif', 'Desistement', 'Deperdition'],
           title: {
@@ -481,7 +377,7 @@ if (isset($_POST['chercher'])) {
         yAxis: {
           min: 0,
           title: {
-            text: 'Population (millions)',
+            text: 'Cours Du Soir',
             align: 'high'
           },
           labels: {
@@ -516,13 +412,13 @@ if (isset($_POST['chercher'])) {
           enabled: false
         },
         series: [{
-          name: 'Year 1990',
+          name: 'Year 2023',
           data: [632, 727, 3202, 721, 100]
         }, {
-          name: 'Year 2000',
+          name: 'Year 2024',
           data: [814, 841, 3714, 726, 100]
         }, {
-          name: 'Year 2021',
+          name: 'Year 2025',
           data: [
             <?= $total_prevu ?>,
             <?= $total_stagiaires ?>,
