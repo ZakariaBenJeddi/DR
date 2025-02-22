@@ -137,7 +137,7 @@ if (isset($_GET['del'])) {
                       </div>
                       <div class="modal-body" id="info_update">
                         <?php
-                        @include("Edit_budget_dr.php");
+                        @include("Edit_cds.php");
                         ?>
                       </div>
                       <div class="modal-footer ">

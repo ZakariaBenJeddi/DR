@@ -4,6 +4,7 @@ session_start();
 // try {
 error_reporting(0);
 include('includes/dbconnection.php');
+
 if (isset($_POST['ajouter'])) {
   $sid = $_POST['id'];
   $dep = $_POST['dep'];
@@ -38,7 +39,7 @@ if (isset($_POST['ajouter'])) {
         actif=:actif,
         transfert=:transfert,
         desistement=:desistement,
-        redoublement=:redoublement
+        redoublement=:redoublement,
         passerelle=:passerelle
         WHERE id=:sid";
 
@@ -176,7 +177,11 @@ if (isset($_POST['ajouter'])) {
                         <div class="col-md-4">
                           <div class="form-group">
                             <label for="annee_etude">Annee Etude</label>
-                            <input class="form-control" name="annee_etude" id="annee_etude" value="<?php echo $row['annee_etude']; ?>" required>
+                            <select class="form-control" name="annee_etude" id="annee_etude" required>
+                              <option value="1ère année" <?php echo ($row['annee_etude'] == '1ère année') ? 'selected' : ''; ?>>1ère année</option>
+                              <option value="2ème année" <?php echo ($row['annee_etude'] == '2ème année') ? 'selected' : ''; ?>>2ème année</option>
+                              <option value="3ème année" <?php echo ($row['annee_etude'] == '3ème année') ? 'selected' : ''; ?>>3ème année</option>
+                            </select>
                           </div>
                         </div>
                         <div class="col-md-4">
@@ -184,7 +189,6 @@ if (isset($_POST['ajouter'])) {
                             <label for="stagiaires">Stagiaires</label>
                             <input class="form-control" name="stagiaires" id="stagiaires" value="<?php echo $row['stagiaires']; ?>" required>
                           </div>
-
                         </div>
                         <div class="col-md-4">
                           <div class="form-group">

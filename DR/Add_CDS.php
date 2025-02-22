@@ -176,7 +176,6 @@ if (strlen($_SESSION['sid'] == 0)) {
 
                         <div class="form-group col-md-3">
                           <label for="annee_etude">Annee Etude</label>
-                          <!-- <input type="text" class="form-control" id="annee_etude" name="annee_etude" placeholder="Annee Etude" required> -->
                           <select name="annee_etude" id="annee_etude" class="form-select">
                             <option value="1ère année">1ère année</option>
                             <option value="2ème année">2ème année</option>

@@ -99,9 +99,6 @@ if (isset($_POST['ajout'])) {
                 <div class="tab-content">
                   <div class="active tab-pane" id="for_info">
                     <form enctype="multipart/form-data" method="post">
-                      <?php
-                        $iddd =  $row['id'] ;
-                      ?>
                       <div class="row">
                         <div class="col-md-4">
                           <div class="form-group">
@@ -173,7 +170,11 @@ if (isset($_POST['ajout'])) {
                         <div class="col-md-4">
                           <div class="form-group">
                             <label for="annee_etude">Annee Etude</label>
-                            <input class="form-control" name="annee_etude" id="annee_etude" value="<?php echo $row['annee_etude']; ?>" required>
+                            <select class="form-control" name="annee_etude" id="annee_etude" required>
+                              <option value="1ère année" <?php echo ($row['annee_etude'] == '1ère année') ? 'selected' : ''; ?>>1ère année</option>
+                              <option value="2ème année" <?php echo ($row['annee_etude'] == '2ème année') ? 'selected' : ''; ?>>2ème année</option>
+                              <option value="3ème année" <?php echo ($row['annee_etude'] == '3ème année') ? 'selected' : ''; ?>>3ème année</option>
+                            </select>
                           </div>
                         </div>
                         <div class="col-md-4">
