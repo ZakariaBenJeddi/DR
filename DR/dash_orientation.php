@@ -16,7 +16,10 @@ if (empty($_SESSION['sid'])) {
   header('location:logout.php');
 }
 
+// TABS
+$activeTab = isset($_POST['active_tab']) ? $_POST['active_tab'] : 'cds';
 
+// AUTO SELECT (chercher dans le select box)
 $sql_types_formation = $dbh->query("SELECT DISTINCT type_formation FROM cds_v2");
 $sql_types_formation->execute();
 $types_formation = $sql_types_formation->fetchAll(PDO::FETCH_ASSOC);
@@ -37,121 +40,7 @@ $sql_annee_etude = $dbh->query("SELECT DISTINCT annee_etude FROM cds_v2");
 $sql_annee_etude->execute();
 $annee_etude = $sql_annee_etude->fetchAll(PDO::FETCH_ASSOC);
 
-if (isset($_POST['chercher'])) {
-  $dd = $_POST['dd'];
-  $ff = $_POST['df'];
-  $formation = !empty($_POST['formation']) ? $_POST['formation'] : null;
-  $niveau = !empty($_POST['niveau']) ? $_POST['niveau'] : null;
-  $efp = !empty($_POST['efp']) ? $_POST['efp'] : null;
-  $filiere = !empty($_POST['filiere']) ? $_POST['filiere'] : null;
-  $annee_etude = !empty($_POST['annee_etude']) ? $_POST['annee_etude'] : null;
-
-  // Construire la requête de base
-  $query = "SELECT 
-      SUM(prevu) as total_prevu,
-      SUM(stagiaires) as total_stagiaires,
-      SUM(actif) as total_actif,
-      SUM(transfert) as total_transfert,
-      SUM(desistement) as total_desistement,
-      SUM(redoublement) as total_redoublement
-  FROM cds_v2 
-  WHERE date_creation BETWEEN :dd AND :ff";
-
-  // Ajouter les conditions de filtrage si elles sont définies
-  $params = [':dd' => $dd, ':ff' => $ff];
-
-  if ($formation) {
-    $query .= " AND type_formation = :formation";
-    $params[':formation'] = $formation;
-  }
-  if ($niveau) {
-    $query .= " AND niveau = :niveau";
-    $params[':niveau'] = $niveau;
-  }
-  if ($efp) {
-    $query .= " AND efp = :efp";
-    $params[':efp'] = $efp;
-  }
-  if ($filiere) {
-    $query .= " AND filiere = :filiere";
-    $params[':filiere'] = $filiere;
-  }
-  if ($annee_etude) {
-    $query .= " AND annee_etude = :annee_etude";
-    $params[':annee_etude'] = $annee_etude;
-  }
-
-  // Préparer et exécuter la requête
-  $stmt = $dbh->prepare($query);
-  $stmt->execute($params);
-  $results = $stmt->fetch(PDO::FETCH_ASSOC);
-
-  // Stocker les résultats dans des variables
-  $total_prevu = $results['total_prevu'] ?? 0;
-  $total_stagiaires = $results['total_stagiaires'] ?? 0;
-  $total_actif = $results['total_actif'] ?? 0;
-  $total_transfert = $results['total_transfert'] ?? 0;
-  $total_desistement = $results['total_desistement'] ?? 0;
-  $total_redoublement = $results['total_redoublement'] ?? 0;
-} else {
-  // Requête par défaut sans filtrage par date
-  $query_default = "SELECT 
-      SUM(prevu) as total_prevu,
-      SUM(stagiaires) as total_stagiaires,
-      SUM(actif) as total_actif,
-      SUM(transfert) as total_transfert,
-      SUM(desistement) as total_desistement,
-      SUM(redoublement) as total_redoublement
-  FROM cds_v2";
-
-  $stmt_default = $dbh->query($query_default);
-  $results_default = $stmt_default->fetch(PDO::FETCH_ASSOC);
-
-  // Stocker les résultats par défaut
-  $total_prevu = $results_default['total_prevu'] ?? 0;
-  $total_stagiaires = $results_default['total_stagiaires'] ?? 0;
-  $total_actif = $results_default['total_actif'] ?? 0;
-  $total_transfert = $results_default['total_transfert'] ?? 0;
-  $total_desistement = $results_default['total_desistement'] ?? 0;
-  $total_redoublement = $results_default['total_redoublement'] ?? 0;
-
-
-
-  // messages
-
-  $messages = [];
-
-  // 1. Nombre d'actifs très inférieur au nombre d'inscriptions
-  if ($total_actif < ($total_stagiaires * 0.5)) {
-    $messages[] = "Attention : le nombre d'actifs ($total_actif) est très inférieur au nombre d'inscriptions ($total_stagiaires). Vérifiez les données.";
-  }
-
-  // 2. Désistements élevés
-  if ($total_desistement > ($total_stagiaires * 0.3)) {
-    $messages[] = "Le taux de désistement est élevé : $total_desistement désistements sur $total_stagiaires inscrits. Analysez les raisons possibles.";
-  }
-
-  // 3. Redoublements anormalement élevés
-  if ($total_redoublement > ($total_stagiaires * 0.2)) {
-    $messages[] = "Un nombre important de redoublements a été détecté : $total_redoublement redoublements. Une enquête est nécessaire.";
-  }
-
-  // 4. Transferts supérieurs aux actifs
-  if ($total_transfert > $total_actif) {
-    $messages[] = "Incohérence détectée : plus de transferts ($total_transfert) que de stagiaires actifs ($total_actif).";
-  }
-
-  // 5. Nombre de stagiaires supérieur au prévu
-  if ($total_stagiaires > ($total_prevu * 1.2)) {
-    $messages[] = "Le nombre de stagiaires inscrits ($total_stagiaires) dépasse largement la capacité prévue ($total_prevu). Risque de surcharge détecté.";
-  }
-
-  // 6. Vérification de l'équilibre des données
-  $total_calculated = $total_actif + $total_desistement + $total_redoublement + $total_transfert;
-  if ($total_calculated != $total_stagiaires) {
-    $messages[] = "Déséquilibre détecté : la somme des actifs ($total_actif), désistements ($total_desistement), redoublements ($total_redoublement) et transferts ($total_transfert) ne correspond pas au nombre total d'inscrits ($total_stagiaires).";
-  }
-}
+include("./cds_cdj_data.php");
 ?>
 
 <!DOCTYPE html>
@@ -214,6 +103,7 @@ if (isset($_POST['chercher'])) {
         </div><!-- /.container-fluid -->
         <!-- /.content-header -->
         <form method="post">
+          <input type="hidden" name="active_tab" id="active_tab" value="cds">
           <div class="container-fluid bg-white mb-5 rounded py-2 mb-4">
             <div class="row align-items-center">
               <div class="form-group col-md-3">
@@ -305,88 +195,185 @@ if (isset($_POST['chercher'])) {
 
         <!-- Main content -->
         <section class="content bg-light">
-          <!-- <div class="container-fluid bg-white shadow-sm mb-5 rounded p-4">
-            row
-          </div> -->
           <div class="container-fluid bg-white shadow-sm mb-5 rounded p-4">
-            <div class="row py-4 rounded">
-              <h1 class="text-center mb-5">Section Cours Du Soir</h1>
-              <div class="col-lg-3 col-6">
-                <!-- small box -->
-                <div class="small-box bg-info">
-                  <div class="inner">
-                    <?= $total_prevu ?>
-                    <p>Stagiaire Prévu</p>
-                  </div>
-                  <div class="icon">
-                    <i class="fas fa-building"></i>
-                  </div>
-                  <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-              </div>
-              <div class="col-lg-3 col-6">
-                <!-- small box -->
-                <div class="small-box bg-info">
-                  <div class="inner">
-                    <?= $total_stagiaires ?>
-                    <p>Stagiaire Inscrit</p>
-                  </div>
-                  <div class="icon">
-                    <i class="fas fa-building"></i>
-                  </div>
-                  <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-              </div>
-              <div class="col-lg-3 col-6">
-                <!-- small box -->
-                <div class="small-box bg-info">
-                  <div class="inner">
-                    <?= $total_actif ?>
-                    <p>Stagiaire Actif</p>
-                  </div>
-                  <div class="icon">
-                    <i class="fas fa-building"></i>
-                  </div>
-                  <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-              </div>
-              <div class="col-lg-3 col-6">
-                <!-- small box -->
-                <div class="small-box bg-info">
-                  <div class="inner">
-                    <?= $total_desistement ?>
-                    <p>Stagiaire Desistement</p>
-                  </div>
-                  <div class="icon">
-                    <i class="fas fa-building"></i>
-                  </div>
-                  <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-              </div>
-              <?php if (!empty($messages)) : ?>
-                <div class="col-12 alert alert-warning text-white">
-                  <ul style="list-style-type: disc;">
-                    <?php foreach ($messages as $message) : ?>
-                      <li ><?php echo $message; ?></li>
-                    <?php endforeach; ?>
-                  </ul>
-                </div>
-              <?php endif; ?>
+            <div class=""> <!-- card -->
+              <div class="card-header p-2">
+                <ul class="nav nav-pills display-flex justify-content-center align-items-center gap-5">
+                  <li class="nav-item"><a class="nav-link active" href="#cds" data-toggle="tab">Cours Du Soir</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#cdj" data-toggle="tab">Cours Du Jour</a></li>
+                </ul>
+              </div><!-- /.card-header -->
+              <div class=""> <!-- card-body -->
+                <div class="tab-content">
+                  <!-- COURS DU SOIR SECTIOn -->
+                  <div class="active tab-pane" id="cds">
+                    <div class=""> <!-- container-fluid bg-white shadow-sm mb-5 rounded p-4 -->
+                      <div class="row py-4 rounded">
+                        <h1 class="text-center mb-5 fs-bold">
+                          <strong>Section Cours Du Soir</strong>
+                        </h1>
+                        <div class="col-lg-3 col-6">
+                          <!-- small box -->
+                          <div class="small-box bg-info">
+                            <div class="inner">
+                              <?= $total_prevu ?>
+                              <p>Stagiaire Prévu</p>
+                            </div>
+                            <div class="icon">
+                              <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
+                          </div>
+                        </div>
+                        <div class="col-lg-3 col-6">
+                          <!-- small box -->
+                          <div class="small-box bg-info">
+                            <div class="inner">
+                              <?= $total_stagiaires ?>
+                              <p>Stagiaire Inscrit</p>
+                            </div>
+                            <div class="icon">
+                              <i class="fas fa-user-check"></i>
+                            </div>
+                            <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
+                          </div>
+                        </div>
+                        <div class="col-lg-3 col-6">
+                          <!-- small box -->
+                          <div class="small-box bg-info">
+                            <div class="inner">
+                              <?= $total_actif ?>
+                              <p>Stagiaire Actif</p>
+                            </div>
+                            <div class="icon">
+                              <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
+                          </div>
+                        </div>
+                        <div class="col-lg-3 col-6">
+                          <!-- small box -->
+                          <div class="small-box bg-info">
+                            <div class="inner">
+                              <?= $total_desistement ?>
+                              <p>Stagiaire Desistement</p>
+                            </div>
+                            <div class="icon">
+                              <i class="fas fa-user-times"></i>
+                            </div>
+                            <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
+                          </div>
+                        </div>
+                        <?php if (!empty($messages)) : ?>
+                          <div class="col-12 alert alert-warning text-white">
+                            <ul style="list-style-type: disc;">
+                              <?php foreach ($messages as $message) : ?>
+                                <li><?php echo $message; ?></li>
+                              <?php endforeach; ?>
+                            </ul>
+                          </div>
+                        <?php endif; ?>
 
-              <div class="col-lg-4 col-12 mt-lg-5 mt-0">
-                <div id="container" style="width: 100%; height: 400px;"></div>
-              </div>
-              <div class="col-lg-4 col-12 mt-lg-5 mt-0">
-                <div id="container3" style="width: 100%; height: 400px;"></div>
-              </div>
-              <div class="col-lg-4 col-12 mt-lg-5 mt-0">
-                <figure class="highcharts-figure">
-                  <div id="container2"></div>
-                </figure>
-              </div>
-            </div>
-          </div>
-          <!-- /.container-fluid -->
+                        <div class="col-lg-4 col-12 mt-lg-5 mt-0">
+                          <div id="container" style="width: 100%; height: 400px;"></div>
+                        </div>
+                        <div class="col-lg-4 col-12 mt-lg-5 mt-0">
+                          <div id="container3" style="width: 100%; height: 400px;"></div>
+                        </div>
+                        <div class="col-lg-4 col-12 mt-lg-5 mt-0">
+                          <figure class="highcharts-figure">
+                            <div id="container2"></div>
+                          </figure>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- COURS DU JOUR SECTION -->
+                  <div class=" tab-pane" id="cdj">
+                    <div class=""> <!-- container-fluid bg-white shadow-sm mb-5 rounded p-4 -->
+                      <div class="row py-4 rounded">
+                        <h1 class="text-center mb-5 fs-bold">
+                          <strong>Section Cours Du Jour</strong>
+                        </h1>
+                        <div class="col-lg-3 col-6">
+                          <div class="small-box bg-info">
+                            <div class="inner">
+                              <?= $total_prevu_cdj ?>
+                              <p>Stagiaire Prévu</p>
+                            </div>
+                            <div class="icon">
+                              <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
+                          </div>
+                        </div>
+
+                        <div class="col-lg-3 col-6">
+                          <div class="small-box bg-info">
+                            <div class="inner">
+                              <?= $total_stagiaires_cdj ?>
+                              <p>Stagiaire Inscrit</p>
+                            </div>
+                            <div class="icon">
+                              <i class="fas fa-user-check"></i>
+                            </div>
+                            <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
+                          </div>
+                        </div>
+
+                        <div class="col-lg-3 col-6">
+                          <div class="small-box bg-info">
+                            <div class="inner">
+                              <?= $total_actif_cdj ?>
+                              <p>Stagiaire Actif</p>
+                            </div>
+                            <div class="icon">
+                              <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
+                          </div>
+                        </div>
+
+                        <div class="col-lg-3 col-6">
+                          <div class="small-box bg-info">
+                            <div class="inner">
+                              <?= $total_desistement_cdj ?>
+                              <p>Stagiaire Désistement</p>
+                            </div>
+                            <div class="icon">
+                              <i class="fas fa-user-times"></i>
+                            </div>
+                            <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
+                          </div>
+                        </div>
+                        <?php if (!empty($messages_cdj)) : ?>
+                          <div class="col-12 alert alert-warning text-white">
+                            <ul style="list-style-type: disc;">
+                              <?php foreach ($messages_cdj as $message_cdj) : ?>
+                                <li><?php echo $message_cdj; ?></li>
+                              <?php endforeach; ?>
+                            </ul>
+                          </div>
+                        <?php endif; ?>
+
+                        <div class="col-lg-4 col-12 mt-lg-5 mt-0">
+                          <div id="container5" style="width: 100%; height: 400px;"></div>
+                        </div>
+                        <div class="col-lg-4 col-12 mt-lg-5 mt-0">
+                          <div id="container6" style="width: 100%; height: 400px;"></div>
+                        </div>
+                        <!-- <div class="col-lg-4 col-12 mt-lg-5 mt-0">
+                          <figure class="highcharts-figure">
+                            <div id="container2"></div>
+                          </figure>
+                        </div> -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- /.container-fluid -->
         </section>
       </div>
       <!-- /.content-wrapper -->
@@ -405,6 +392,25 @@ if (isset($_POST['chercher'])) {
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
 
+    <!-- DISPLAY ACTIVE TABS APRES LA REFRECHE ET LE FILTRAGE -->
+    <script>
+      // Mettre à jour le champ caché quand on change d'onglet
+      $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+        const targetId = $(e.target).attr("href").substring(1); // enlève le #
+        $("#active_tab").val(targetId);
+      });
+
+      // Au chargement de la page, activer le bon onglet
+      $(document).ready(function() {
+        // Récupérer l'onglet actif depuis PHP
+        const activeTab = "<?php echo isset($_POST['active_tab']) ? $_POST['active_tab'] : 'cds'; ?>";
+
+        // Activer l'onglet correspondant
+        $('a[href="#' + activeTab + '"]').tab('show');
+      });
+    </script>
+
+    <script src="../assets/js/charts/PieChartAnimation.js"></script>
     <!-- PieChartAnimation 1-->
     <script>
       Highcharts.chart('container', {
@@ -473,6 +479,79 @@ if (isset($_POST['chercher'])) {
             <?= $total_actif ?>,
             <?= $total_desistement ?>,
             <?= $total_redoublement ?>
+          ]
+        }]
+      });
+    </script>
+
+    <!-- PieChartAnimation 5 cdj-->
+    <script>
+      Highcharts.chart('container5', {
+        chart: {
+          type: 'bar'
+        },
+        title: {
+          text: 'Historic World Population by Region'
+        },
+        xAxis: {
+          categories: ['Prevu', 'Inscription', 'Actif', 'Desistement', 'Deperdition'],
+          title: {
+            text: null
+          },
+          gridLineWidth: 1,
+          lineWidth: 0
+        },
+        yAxis: {
+          min: 0,
+          title: {
+            text: 'Cours Du Soir',
+            align: 'high'
+          },
+          labels: {
+            overflow: 'justify'
+          },
+          gridLineWidth: 0
+        },
+        tooltip: {
+          valueSuffix: ' Stagiaires'
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: '50%',
+            dataLabels: {
+              enabled: true
+            },
+            groupPadding: 0.1
+          }
+        },
+        legend: {
+          layout: 'vertical',
+          align: 'right',
+          verticalAlign: 'top',
+          x: -40,
+          y: 80,
+          floating: true,
+          borderWidth: 1,
+          backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
+          shadow: true
+        },
+        credits: {
+          enabled: false
+        },
+        series: [{
+          name: 'Year 2023',
+          data: [632, 727, 3202, 721, 100]
+        }, {
+          name: 'Year 2024',
+          data: [814, 841, 3714, 726, 100]
+        }, {
+          name: 'Year 2025',
+          data: [
+            <?= $total_prevu_cdj ?>,
+            <?= $total_stagiaires_cdj ?>,
+            <?= $total_actif_cdj ?>,
+            <?= $total_desistement_cdj ?>,
+            <?= $total_redoublement_cdj ?>
           ]
         }]
       });
@@ -624,216 +703,6 @@ if (isset($_POST['chercher'])) {
             y: <?php echo $total_redoublement ?>,
             color: '#3498db'
           }]
-        }]
-      });
-    </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js" integrity="sha512-R/QOHLpV1Ggq22vfDAWYOaMd5RopHrJNMxi8/lJu8Oihwi4Ho4BRFeiMiCefn9rasajKjnx9/fTQ/xkWnkDACg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://unpkg.com/chart.js-plugin-labels-dv/dist/chartjs-plugin-labels.min.js"></script>
-    <script>
-      // JavaScript pour le graphique
-      var np = <?php echo $np; ?>;
-      var p = <?php echo $p; ?>;
-      document.addEventListener('DOMContentLoaded', function() {
-        var ctx = document.getElementById('myPieChartXX').getContext('2d');
-
-        var myPieChart = new Chart(ctx, {
-          type: 'pie',
-          data: {
-            labels: ['Facture non payée', 'Facture payée'],
-            datasets: [{
-              data: [np, p],
-              backgroundColor: ['#dc3545', '#28a745']
-            }]
-          },
-          options: {
-            plugins: {
-              labels: {
-                display: false,
-                position: 'bottom',
-                render: 'percentage',
-                fontStyle: 'bolder',
-                position: 'inside', //outside
-                textMargin: 6,
-                fontColor: 'white',
-                fontSize: 20,
-              }
-            }
-          },
-          // plugins:[ChartDataLabels] //affiche les nbr (np et n) dans le graphe
-        });
-      });
-    </script>
-    <script>
-      var options = {
-        series: [{
-          name: 'series1',
-          data: [31, 40, 28, 51, 42, 109, 100]
-        }, {
-          name: 'series2',
-          data: [11, 32, 45, 32, 34, 52, 41]
-        }],
-        chart: {
-          height: 350,
-          type: 'area'
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          curve: 'smooth'
-        },
-        xaxis: {
-          type: 'datetime',
-          categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
-        },
-        tooltip: {
-          x: {
-            format: 'dd/MM/yy HH:mm'
-          },
-        },
-      };
-      var chart = new ApexCharts(document.querySelector("#chart"), options);
-      chart.render();
-    </script>
-    <script>
-      // Chart 1: Spline Chart
-      Highcharts.chart('chart-spline', {
-        chart: {
-          type: 'spline'
-        },
-        legend: {
-          symbolWidth: 40
-        },
-        title: {
-          text: 'Most common desktop screen readers',
-          align: 'left'
-        },
-        subtitle: {
-          text: 'Source: WebAIM. Click on points to visit official screen reader website',
-          align: 'left'
-        },
-        yAxis: {
-          title: {
-            text: 'Percentage usage'
-          }
-        },
-        xAxis: {
-          title: {
-            text: 'Time'
-          },
-          categories: ['Dec. 2010', 'May 2012', 'Jan. 2014', 'July 2015', 'Oct. 2017', 'Sep. 2019']
-        },
-        tooltip: {
-          valueSuffix: '%',
-          stickOnContact: true
-        },
-        plotOptions: {
-          series: {
-            point: {
-              events: {
-                click: function() {
-                  window.location.href = this.series.options.website;
-                }
-              }
-            },
-            cursor: 'pointer',
-            lineWidth: 2
-          }
-        },
-        series: [{
-            name: 'NVDA',
-            data: [34.8, 43.0, 51.2, 41.4, 64.9, 72.4],
-            website: 'https://www.nvaccess.org'
-          },
-          {
-            name: 'JAWS',
-            data: [69.6, 63.7, 63.9, 43.7, 66.0, 61.7],
-            website: 'https://www.freedomscientific.com/Products/Blindness/JAWS',
-            dashStyle: 'ShortDashDot'
-          },
-          {
-            name: 'VoiceOver',
-            data: [20.2, 30.7, 36.8, 30.9, 39.6, 47.1],
-            website: 'http://www.apple.com/accessibility/osx/voiceover',
-            dashStyle: 'ShortDot'
-          },
-          {
-            name: 'Narrator',
-            data: [null, null, null, null, 21.4, 30.3],
-            website: 'https://support.microsoft.com/en-us/help/22798/windows-10-complete-guide-to-narrator',
-            dashStyle: 'Dash'
-          }
-        ]
-      });
-
-      // Chart 2: Pie Chart
-      const colors = Highcharts.getOptions().colors;
-      const pieColors = [colors[2], colors[0], colors[3], colors[1], colors[4]];
-
-      Highcharts.chart('chart-pie', {
-        chart: {
-          type: 'pie'
-        },
-        title: {
-          text: 'Primary desktop/laptop screen readers',
-          align: 'left'
-        },
-        subtitle: {
-          text: 'Source: WebAIM. Click on point to visit official website',
-          align: 'left'
-        },
-        colors: pieColors,
-        tooltip: {
-          valueSuffix: '%',
-          borderColor: '#8ae',
-          shape: 'rect',
-          backgroundColor: 'rgba(255, 255, 255, 0.94)'
-        },
-        plotOptions: {
-          series: {
-            dataLabels: {
-              enabled: true,
-              format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-            },
-            point: {
-              events: {
-                click: function() {
-                  window.location.href = this.website;
-                }
-              }
-            },
-            cursor: 'pointer'
-          }
-        },
-        series: [{
-          name: 'Screen reader usage',
-          data: [{
-              name: 'NVDA',
-              y: 40.6,
-              website: 'https://www.nvaccess.org'
-            },
-            {
-              name: 'JAWS',
-              y: 40.1,
-              website: 'https://www.freedomscientific.com/Products/Blindness/JAWS'
-            },
-            {
-              name: 'VoiceOver',
-              y: 12.9,
-              website: 'http://www.apple.com/accessibility/osx/voiceover'
-            },
-            {
-              name: 'ZoomText',
-              y: 2,
-              website: 'http://www.zoomtext.com/products/zoomtext-magnifierreader'
-            },
-            {
-              name: 'Other',
-              y: 4.4,
-              website: 'http://www.disabled-world.com/assistivedevices/computer/screen-readers.php'
-            }
-          ]
         }]
       });
     </script>
