@@ -69,124 +69,45 @@ $t  =  count($messages);
           </div>
         </div><!-- /.container-fluid -->
       </section>
-      <div class="card-header">
-        <form method="post">
-          <div class="row">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <div class="form-group col-md-3">
-              <label for="names">Selectionner la Date de Debut</label>
-              <input type="date" class="form-control" id="dd" name="dd" placeholder="Nom" required>
-            </div>
-            <div class="form-group col-md-3">
-              <label for="prenom">Selectionner la Date De Fin</label>
-              <input type="date" class="form-control" id="df" name="df" placeholder="Prenom" required>
-            </div>
-            <!-- </div> -->
-            <div class="form-group col-md-3 mt-3">
-              <button style="color:blue" class="btn mt-3" type="submit" name="chercher" id="ch"><i class="fa fa-search"></i> Chercher</button>
-              <button style="color:blue" class="btn mt-3" type="submit" name="cht" id="ch1"><i class="fa fa-search"></i> afficher tous</button>
-            </div>
-
-          </div>
-          <div class="form-group col-md-3">
-            <script>
-              // Obtenez la balise input type date par son ID
-              const dd = document.getElementById("dd");
-              const df = document.getElementById("df");
-
-              // Obtenez la date d'aujourd'hui sous forme de chaîne (AAAA-MM-JJ)
-              const today = new Date().toISOString().split('T')[0];
-
-              // Définir la valeur par défaut de la balise sur la date d'aujourd'hui
-              dd.value = today;
-              df.value = today;
-            </script>
-
-          </div>
-        </form>
-      </div>
       <!-- Main content -->
       <section class="content">
         <div class="container-fluid">
           <div class="row">
             <div class="col-12">
               <div class="card">
-                <div class="card-header">
-                  <!-- <h3 class="card-title">Gérer les Factures payer</h3> -->
-                  <h3 class="card-title"></h3>
-                  <div class="card-tools">
-                    <button type="button" class="btn btn-sm btn-primary" onclick="expo()" id='btnexp'><span style="color: #fff;"><i class="fas fa-download"></i> Exporter</span>
-                    </button>
-                  </div>
-                </div>
-                <!-- /.card-header -->
-                <div id="editData" class="modal fade">
-                  <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title">Détails Demande de prix</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
-                      <div class="modal-body" id="info_update">
-                        <?php
-                        @include("Edit_demande_prix.php");
-                        ?>
-                      </div>
-                      <div class="modal-footer ">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-                      </div>
-                      <!-- /.modal-content -->
-                    </div>
-                    <!-- /.modal-dialog -->
-                  </div>
-                  <!-- /.modal -->
-                </div>
-                <!--   end modal -->
-                <div id="editData2" class="modal fade">
-                  <div class="modal-dialog ">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title">Détails Demande de prix</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
-                      <div class="modal-body" id="info_update2">
-                      </div>
-                      <div class="modal-footer ">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-                      </div>
-                      <!-- /.modal-content -->
-                    </div>
-                    <!-- /.modal-dialog -->
-                  </div>
-                  <!-- /.modal -->
-                </div>
-                <!--   end modal -->
                 <div class="card-body mt-2 ">
-                  <?php if (!empty($messages)  && count($messages) > 0) : ?>
-                    <h3 class="text-center mb-3">CDS</h3>
-                    <div class="col-12 alert alert-danger text-white">
-                      <ul style="list-style-type: disc;">
-                        <?php foreach ($messages as $message) : ?>
-                          <li><?php echo $message; ?></li>
-                        <?php endforeach; ?>
-                      </ul>
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div class="notif-cds d-flex flex-column w-50 me-2">
+                      <h3 class="text-center mb-3">CDS</h3>
+                      <div class="col-12 alert <?php echo !empty($messages) ? 'alert-danger text-white' : 'alert-success text-dark'; ?>">
+                        <ul style="list-style-type: disc;">
+                          <?php if (!empty($messages)) : ?>
+                            <?php foreach ($messages as $message) : ?>
+                              <li><?php echo $message; ?></li>
+                            <?php endforeach; ?>
+                          <?php else : ?>
+                            Aucun message pour CDS.
+                          <?php endif; ?>
+                        </ul>
+                      </div>
                     </div>
-                  <?php endif; ?>
 
-                  <?php if (!empty($messages_cdj)) : ?>
-                    <h3 class="text-center my-3">CDJ</h3>
-                    <div class="col-12 alert alert-danger text-white">
-                      <ul style="list-style-type: disc;">
-                        <?php foreach ($messages_cdj as $message_cdj) : ?>
-                          <li><?php echo $message_cdj; ?></li>
-                        <?php endforeach; ?>
-                      </ul>
+                    <div class="notif-cdj d-flex flex-column w-50 ms-2">
+                      <h3 class="text-center mb-3">CDJ</h3>
+                      <div class="col-12 alert <?php echo !empty($messages_cdj) ? 'alert-danger text-white' : 'alert-success text-dark'; ?>">
+                        <ul style="list-style-type: disc;">
+                          <?php if (!empty($messages_cdj)) : ?>
+                            <?php foreach ($messages_cdj as $message_cdj) : ?>
+                              <li><?php echo $message_cdj; ?></li>
+                            <?php endforeach; ?>
+                          <?php else : ?>
+                            Aucun message pour CDJ.
+                          <?php endif; ?>
+                        </ul>
+                      </div>
                     </div>
-                  <?php endif; ?>
+                  </div>
+
                 </div>
                 <!-- /.card-body -->
               </div>

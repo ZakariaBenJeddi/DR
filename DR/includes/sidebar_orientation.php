@@ -17,7 +17,7 @@
       }
       ?>
     style="opacity: .8">
-    <span class="brand-text font-weight-light">SRIO</span>
+    <h4 class="brand-text font-weight-light"><strong>SERVICE SRIO</strong></h4>
   </a>
 
   <!-- Sidebar -->
