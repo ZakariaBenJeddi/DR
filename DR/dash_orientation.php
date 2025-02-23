@@ -264,7 +264,8 @@ include("./cds_cdj_data.php");
                             <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
-                        <?php if (!empty($messages)) : ?>
+                        <?php if (!empty($messages)  && count($messages) > 0) : ?>
+                          <?php echo count($messages) ?>
                           <div class="col-12 alert alert-warning text-white">
                             <ul style="list-style-type: disc;">
                               <?php foreach ($messages as $message) : ?>
