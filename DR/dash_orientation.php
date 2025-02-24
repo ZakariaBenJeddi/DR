@@ -41,6 +41,9 @@ $sql_annee_etude->execute();
 $annee_etude = $sql_annee_etude->fetchAll(PDO::FETCH_ASSOC);
 
 include("./cds_cdj_data.php");
+
+$ratio_actif = ($total_stagiaires > 0) ? ($total_actif / $total_stagiaires * 100) : 0;
+$ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stagiaires_cdj * 100) : 0;
 ?>
 
 <!DOCTYPE html>
@@ -222,7 +225,8 @@ include("./cds_cdj_data.php");
                             <div class="icon">
                               <i class="fas fa-calendar-check"></i>
                             </div>
-                            <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
+                            <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
+                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
                         <div class="col-lg-3 col-6">
@@ -235,7 +239,8 @@ include("./cds_cdj_data.php");
                             <div class="icon">
                               <i class="fas fa-user-check"></i>
                             </div>
-                            <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
+                            <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
+                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
                         <div class="col-lg-3 col-6">
@@ -248,7 +253,8 @@ include("./cds_cdj_data.php");
                             <div class="icon">
                               <i class="fas fa-user-graduate"></i>
                             </div>
-                            <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
+                            <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
+                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
                         <div class="col-lg-3 col-6">
@@ -261,11 +267,11 @@ include("./cds_cdj_data.php");
                             <div class="icon">
                               <i class="fas fa-user-times"></i>
                             </div>
-                            <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
+                            <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
+                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
                         <?php if (!empty($messages)  && count($messages) > 0) : ?>
-                          <?php echo count($messages) ?>
                           <div class="col-12 alert alert-warning text-white">
                             <ul style="list-style-type: disc;">
                               <?php foreach ($messages as $message) : ?>
@@ -306,7 +312,8 @@ include("./cds_cdj_data.php");
                             <div class="icon">
                               <i class="fas fa-calendar-check"></i>
                             </div>
-                            <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
+                            <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
+                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
 
@@ -319,7 +326,8 @@ include("./cds_cdj_data.php");
                             <div class="icon">
                               <i class="fas fa-user-check"></i>
                             </div>
-                            <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
+                            <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
+                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
 
@@ -332,7 +340,8 @@ include("./cds_cdj_data.php");
                             <div class="icon">
                               <i class="fas fa-user-graduate"></i>
                             </div>
-                            <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
+                            <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
+                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
 
@@ -345,7 +354,8 @@ include("./cds_cdj_data.php");
                             <div class="icon">
                               <i class="fas fa-user-times"></i>
                             </div>
-                            <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a>
+                            <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
+                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
                         <?php if (!empty($messages_cdj)) : ?>
@@ -359,16 +369,16 @@ include("./cds_cdj_data.php");
                         <?php endif; ?>
 
                         <div class="col-lg-4 col-12 mt-lg-5 mt-0">
+                          <div id="container4" style="width: 100%; height: 400px;"></div>
+                        </div>
+                        <div class="col-lg-4 col-12 mt-lg-5 mt-0">
                           <div id="container5" style="width: 100%; height: 400px;"></div>
                         </div>
                         <div class="col-lg-4 col-12 mt-lg-5 mt-0">
-                          <div id="container6" style="width: 100%; height: 400px;"></div>
-                        </div>
-                        <!-- <div class="col-lg-4 col-12 mt-lg-5 mt-0">
                           <figure class="highcharts-figure">
-                            <div id="container2"></div>
+                            <div id="container6"></div>
                           </figure>
-                        </div> -->
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -419,7 +429,7 @@ include("./cds_cdj_data.php");
           type: 'bar'
         },
         title: {
-          text: 'Historic World Population by Region'
+          text: 'Cours Du Soir Statistique'
         },
         xAxis: {
           categories: ['Prevu', 'Inscription', 'Actif', 'Desistement', 'Deperdition'],
@@ -487,15 +497,15 @@ include("./cds_cdj_data.php");
 
     <!-- PieChartAnimation 5 cdj-->
     <script>
-      Highcharts.chart('container5', {
+      Highcharts.chart('container4', {
         chart: {
           type: 'bar'
         },
         title: {
-          text: 'Historic World Population by Region'
+          text: 'Cours Du Jour Statistique'
         },
         xAxis: {
-          categories: ['Prevu', 'Inscription', 'Actif', 'Desistement', 'Deperdition'],
+          categories: ['Prevu', 'Inscription', 'Actif', 'Desistement', 'Deperdition', "Passerelle"],
           title: {
             text: null
           },
@@ -505,7 +515,7 @@ include("./cds_cdj_data.php");
         yAxis: {
           min: 0,
           title: {
-            text: 'Cours Du Soir',
+            text: 'Cours Du Jour',
             align: 'high'
           },
           labels: {
@@ -541,10 +551,10 @@ include("./cds_cdj_data.php");
         },
         series: [{
           name: 'Year 2023',
-          data: [632, 727, 3202, 721, 100]
+          data: [632, 727, 3202, 721, 300, 432]
         }, {
           name: 'Year 2024',
-          data: [814, 841, 3714, 726, 100]
+          data: [814, 841, 3714, 726, 120, 492]
         }, {
           name: 'Year 2025',
           data: [
@@ -552,7 +562,8 @@ include("./cds_cdj_data.php");
             <?= $total_stagiaires_cdj ?>,
             <?= $total_actif_cdj ?>,
             <?= $total_desistement_cdj ?>,
-            <?= $total_redoublement_cdj ?>
+            <?= $total_redoublement_cdj ?>,
+            <?= $total_passerelle_cdj ?>
           ]
         }]
       });
@@ -565,7 +576,7 @@ include("./cds_cdj_data.php");
           type: 'column'
         },
         title: {
-          text: 'Prévu vs Inscription'
+          text: 'Prévu vs Inscription CDS'
         },
         xAxis: {
           categories: ['Stagiaires'],
@@ -601,7 +612,7 @@ include("./cds_cdj_data.php");
       });
     </script>
 
-    <!-- PieChartAnimation 2-->
+    <!-- PieChartAnimation 2 CDS-->
     <script>
       Highcharts.chart('container2', {
         chart: {
@@ -647,7 +658,7 @@ include("./cds_cdj_data.php");
           }
         },
         title: {
-          text: 'Distribution des Stagiaires'
+          text: 'Distribution des Stagiaires CDS'
         },
         tooltip: {
           pointFormat: '{series.name}: <b>{point.y}</b> ({point.percentage:.1f}%)'
@@ -689,8 +700,7 @@ include("./cds_cdj_data.php");
           data: [{
             name: 'Actifs',
             y: <?php echo $total_actif ?>,
-            // color: '#2ecc71'
-            color: (<?php echo $total_actif ?> / <?php echo $total_stagiaires ?> * 100 < 50) ? '#f1c40f' : (<?php echo $total_actif ?> / <?php echo $total_stagiaires ?> * 100 < 94) ? '#3498db' : '#2ecc71'
+            color: (<?php echo $ratio_actif; ?> < 50) ? '#f1c40f' : (<?php echo $ratio_actif; ?> < 94) ? '#3498db' : '#2ecc71'
           }, {
             name: 'Transferts',
             y: <?php echo $total_transfert ?>,
@@ -705,5 +715,160 @@ include("./cds_cdj_data.php");
             color: '#3498db'
           }]
         }]
+      });
+    </script>
+
+    <!-- PieChartAnimation 6 CDJ-->
+    <script>
+      Highcharts.chart('container6', {
+        chart: {
+          type: 'pie',
+          custom: {},
+          events: {
+            render() {
+              const chart = this,
+                series = chart.series[0];
+              let customLabel = chart.options.chart.custom.label;
+
+              if (!customLabel) {
+                customLabel = chart.options.chart.custom.label =
+                  chart.renderer.label(
+                    '<div style="font-size:14px">Prévu : <strong><?php echo $total_prevu_cdj ?></strong></br>' +
+                    'Inscription : <strong><?php echo $total_stagiaires_cdj ?></strong></div>'
+                  )
+                  .css({
+                    color: '#000',
+                    textAnchor: 'middle',
+                    fontWeight: 'bold'
+                  })
+                  .add();
+              }
+
+              const x = series.center[0] + chart.plotLeft,
+                y = series.center[1] + chart.plotTop -
+                (customLabel.attr('height') / 2);
+
+              customLabel.attr({
+                x,
+                y
+              });
+              customLabel.css({
+                fontSize: `${series.center[2] / 12}px`
+              });
+            }
+          }
+        },
+        accessibility: {
+          point: {
+            valueSuffix: '%'
+          }
+        },
+        title: {
+          text: 'Distribution des Stagiaires CDJ'
+        },
+        tooltip: {
+          pointFormat: '{series.name}: <b>{point.y}</b> ({point.percentage:.1f}%)'
+        },
+        legend: {
+          enabled: false
+        },
+        plotOptions: {
+          series: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            borderRadius: 8,
+            dataLabels: [{
+              enabled: true,
+              distance: 20,
+              format: '{point.name}'
+            }, {
+              enabled: true,
+              distance: -35,
+              format: '{point.y}<br>{point.percentage:.0f}%',
+              style: {
+                fontSize: '0.9em',
+                textAlign: 'center',
+                fontWeight: 'bold'
+              },
+              filter: {
+                property: 'percentage',
+                operator: '>',
+                value: 4
+              }
+            }],
+            showInLegend: true
+          }
+        },
+        series: [{
+          name: 'Stagiaires',
+          colorByPoint: true,
+          innerSize: '75%',
+          data: [{
+            name: 'Actifs',
+            y: <?php echo $total_actif_cdj ?>,
+            // color: '#2ecc71'
+            color: (<?php echo $ratio_actif_cdj; ?> < 50) ? '#f1c40f' : (<?php echo $ratio_actif_cdj; ?> < 94) ? '#3498db' : '#2ecc71'
+          }, {
+            name: 'Transferts',
+            y: <?php echo $total_transfert_cdj ?>,
+            color: '#f1c40f'
+          }, {
+            name: 'Désistements',
+            y: <?php echo $total_desistement_cdj ?>,
+            color: '#e74c3c'
+          }, {
+            name: 'Redoublements',
+            y: <?php echo $total_redoublement_cdj ?>,
+            color: '#f39c12'
+          }, {
+            name: 'Passerelle',
+            y: <?php echo $total_passerelle_cdj ?>,
+            color: '#e67e22'
+          }]
+        }]
+      });
+    </script>
+
+
+    <!-- PieChartAnimation 5 CDJ-->
+    <script>
+      Highcharts.chart('container5', {
+        chart: {
+          type: 'column'
+        },
+        title: {
+          text: 'Prévu vs Inscription CDJ'
+        },
+        xAxis: {
+          categories: ['Stagiaires'],
+          crosshair: true,
+          accessibility: {
+            description: 'Countries'
+          }
+        },
+        yAxis: {
+          min: 0,
+          title: {
+            text: 'Prévu / Inscription'
+          }
+        },
+        tooltip: {
+          valueSuffix: 'Stagiaires'
+        },
+        plotOptions: {
+          column: {
+            pointPadding: 0.2,
+            borderWidth: 0
+          }
+        },
+        series: [{
+            name: 'Prévu',
+            data: [<?php echo $total_prevu_cdj ?>]
+          },
+          {
+            name: 'Inscription',
+            data: [<?php echo $total_stagiaires_cdj ?>]
+          }
+        ]
       });
     </script>

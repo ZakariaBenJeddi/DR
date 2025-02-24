@@ -27,7 +27,8 @@ if (isset($_POST['chercher'])) {
     SUM(actif) as total_actif_cdj,
     SUM(transfert) as total_transfert_cdj,
     SUM(desistement) as total_desistement_cdj,
-    SUM(redoublement) as total_redoublement_cdj
+    SUM(redoublement) as total_redoublement_cdj,
+    SUM(passerelle) as total_passerelle_cdj
 FROM cdj_v2 
 WHERE date_creation BETWEEN :dd AND :ff";
 
@@ -96,6 +97,7 @@ WHERE date_creation BETWEEN :dd AND :ff";
   $total_transfert_cdj = $results_cdj['total_transfert_cdj'] ?? 0;
   $total_desistement_cdj = $results_cdj['total_desistement_cdj'] ?? 0;
   $total_redoublement_cdj = $results_cdj['total_redoublement_cdj'] ?? 0;
+  $total_passerelle_cdj = $results_cdj['total_passerelle_cdj'] ?? 0;
 } else {
   // Requête par défaut sans filtrage par date
   $query_default = "SELECT 
@@ -168,7 +170,8 @@ WHERE date_creation BETWEEN :dd AND :ff";
       SUM(actif) as total_actif_cdj,
       SUM(transfert) as total_transfert_cdj,
       SUM(desistement) as total_desistement_cdj,
-      SUM(redoublement) as total_redoublement_cdj
+      SUM(redoublement) as total_redoublement_cdj,
+      SUM(passerelle) as total_passerelle_cdj
   FROM cdj_v2";
 
   $stmt_default_cdj = $dbh->query($query_default_cdj);
@@ -180,6 +183,7 @@ WHERE date_creation BETWEEN :dd AND :ff";
   $total_transfert_cdj = $results_default_cdj['total_transfert_cdj'] ?? 0;
   $total_desistement_cdj = $results_default_cdj['total_desistement_cdj'] ?? 0;
   $total_redoublement_cdj = $results_default_cdj['total_redoublement_cdj'] ?? 0;
+  $total_passerelle_cdj = $results_default_cdj['total_passerelle_cdj'] ?? 0;
 
   // Messages d'alerte
   $messages_cdj = [];
