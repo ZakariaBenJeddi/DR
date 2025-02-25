@@ -202,102 +202,14 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
             <div class=""> <!-- card -->
               <div class="card-header p-2">
                 <ul class="nav nav-pills display-flex justify-content-center align-items-center gap-5">
-                  <li class="nav-item"><a class="nav-link active" href="#cds" data-toggle="tab">Cours Du Soir</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#cdj" data-toggle="tab">Cours Du Jour</a></li>
+                  <li class="nav-item"><a class="nav-link active" href="#cdj" data-toggle="tab">Cours Du Jour</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#cds" data-toggle="tab">Cours Du Soir</a></li>
                 </ul>
               </div><!-- /.card-header -->
               <div class=""> <!-- card-body -->
                 <div class="tab-content">
-                  <!-- COURS DU SOIR SECTIOn -->
-                  <div class="active tab-pane" id="cds">
-                    <div class=""> <!-- container-fluid bg-white shadow-sm mb-5 rounded p-4 -->
-                      <div class="row py-4 rounded">
-                        <h1 class="text-center mb-5 fs-bold">
-                          <strong>Section Cours Du Soir</strong>
-                        </h1>
-                        <div class="col-lg-3 col-6">
-                          <!-- small box -->
-                          <div class="small-box bg-info">
-                            <div class="inner">
-                              <?= $total_prevu ?>
-                              <p>Stagiaire Prévu</p>
-                            </div>
-                            <div class="icon">
-                              <i class="fas fa-calendar-check"></i>
-                            </div>
-                            <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
-                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
-                          </div>
-                        </div>
-                        <div class="col-lg-3 col-6">
-                          <!-- small box -->
-                          <div class="small-box bg-info">
-                            <div class="inner">
-                              <?= $total_stagiaires ?>
-                              <p>Stagiaire Inscrit</p>
-                            </div>
-                            <div class="icon">
-                              <i class="fas fa-user-check"></i>
-                            </div>
-                            <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
-                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
-                          </div>
-                        </div>
-                        <div class="col-lg-3 col-6">
-                          <!-- small box -->
-                          <div class="small-box bg-info">
-                            <div class="inner">
-                              <?= $total_actif ?>
-                              <p>Stagiaire Actif</p>
-                            </div>
-                            <div class="icon">
-                              <i class="fas fa-user-graduate"></i>
-                            </div>
-                            <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
-                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
-                          </div>
-                        </div>
-                        <div class="col-lg-3 col-6">
-                          <!-- small box -->
-                          <div class="small-box bg-info">
-                            <div class="inner">
-                              <?= $total_desistement ?>
-                              <p>Stagiaire Desistement</p>
-                            </div>
-                            <div class="icon">
-                              <i class="fas fa-user-times"></i>
-                            </div>
-                            <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
-                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
-                          </div>
-                        </div>
-                        <?php if (!empty($messages)  && count($messages) > 0) : ?>
-                          <div class="col-12 alert alert-warning text-white">
-                            <ul style="list-style-type: disc;">
-                              <?php foreach ($messages as $message) : ?>
-                                <li><?php echo $message; ?></li>
-                              <?php endforeach; ?>
-                            </ul>
-                          </div>
-                        <?php endif; ?>
-
-                        <div class="col-lg-4 col-12 mt-lg-5 mt-0">
-                          <div id="container" style="width: 100%; height: 400px;"></div>
-                        </div>
-                        <div class="col-lg-4 col-12 mt-lg-5 mt-0">
-                          <div id="container3" style="width: 100%; height: 400px;"></div>
-                        </div>
-                        <div class="col-lg-4 col-12 mt-lg-5 mt-0">
-                          <figure class="highcharts-figure">
-                            <div id="container2"></div>
-                          </figure>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
                   <!-- COURS DU JOUR SECTION -->
-                  <div class=" tab-pane" id="cdj">
+                  <div class="active tab-pane" id="cdj">
                     <div class=""> <!-- container-fluid bg-white shadow-sm mb-5 rounded p-4 -->
                       <div class="row py-4 rounded">
                         <h1 class="text-center mb-5 fs-bold">
@@ -310,7 +222,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                               <p>Stagiaire Prévu</p>
                             </div>
                             <div class="icon">
-                              <i class="fas fa-calendar-check"></i>
+                              <i class="fas fa-calendar-check text-white"></i>
                             </div>
                             <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
                             <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
@@ -324,7 +236,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                               <p>Stagiaire Inscrit</p>
                             </div>
                             <div class="icon">
-                              <i class="fas fa-user-check"></i>
+                              <i class="fas fa-user-check text-white"></i>
                             </div>
                             <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
                             <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
@@ -338,7 +250,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                               <p>Stagiaire Actif</p>
                             </div>
                             <div class="icon">
-                              <i class="fas fa-user-graduate"></i>
+                              <i class="fas fa-user-graduate text-white"></i>
                             </div>
                             <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
                             <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
@@ -352,7 +264,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                               <p>Stagiaire Désistement</p>
                             </div>
                             <div class="icon">
-                              <i class="fas fa-user-times"></i>
+                              <i class="fas fa-user-times text-white"></i>
                             </div>
                             <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
                             <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
@@ -382,9 +294,98 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                       </div>
                     </div>
                   </div>
-                </div>
+                  <!-- COURS DU SOIR SECTION -->
+                  <div class="tab-pane" id="cds">
+                    <div class=""> <!-- container-fluid bg-white shadow-sm mb-5 rounded p-4 -->
+                      <div class="row py-4 rounded">
+                        <h1 class="text-center mb-5 fs-bold">
+                          <strong>Section Cours Du Soir</strong>
+                        </h1>
+                        <div class="col-lg-3 col-6">
+                          <!-- small box -->
+                          <div class="small-box bg-info">
+                            <div class="inner">
+                              <?= $total_prevu ?>
+                              <p>Stagiaire Prévu</p>
+                            </div>
+                            <div class="icon">
+                              <i class="fas fa-calendar-check text-white"></i>
+                            </div>
+                            <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
+                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+                          </div>
+                        </div>
+                        <div class="col-lg-3 col-6">
+                          <!-- small box -->
+                          <div class="small-box bg-info">
+                            <div class="inner">
+                              <?= $total_stagiaires ?>
+                              <p>Stagiaire Inscrit</p>
+                            </div>
+                            <div class="icon">
+                              <i class="fas fa-user-check text-white"></i>
+                            </div>
+                            <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
+                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+                          </div>
+                        </div>
+                        <div class="col-lg-3 col-6">
+                          <!-- small box -->
+                          <div class="small-box bg-info">
+                            <div class="inner">
+                              <?= $total_actif ?>
+                              <p>Stagiaire Actif</p>
+                            </div>
+                            <div class="icon">
+                              <i class="fas fa-user-graduate text-white"></i>
+                            </div>
+                            <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
+                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+                          </div>
+                        </div>
+                        <div class="col-lg-3 col-6">
+                          <!-- small box -->
+                          <div class="small-box bg-info">
+                            <div class="inner">
+                              <?= $total_desistement ?>
+                              <p>Stagiaire Desistement</p>
+                            </div>
+                            <div class="icon">
+                              <i class="fas fa-user-times text-white"></i>
+                            </div>
+                            <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
+                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+                          </div>
+                        </div>
+                        <?php if (!empty($messages)  && count($messages) > 0) : ?>
+                          <div class="col-12 alert alert-warning text-white">
+                            <ul style="list-style-type: disc;">
+                              <?php foreach ($messages as $message) : ?>
+                                <li><?php echo $message; ?></li>
+                              <?php endforeach; ?>
+                            </ul>
+                          </div>
+                        <?php endif; ?>
 
-                <!-- /.container-fluid -->
+                        <div class="col-lg-4 col-12 mt-lg-5 mt-0">
+                          <div id="container" style="width: 100%; height: 400px;"></div>
+                        </div>
+                        <div class="col-lg-4 col-12 mt-lg-5 mt-0">
+                          <div id="container3" style="width: 100%; height: 400px;"></div>
+                        </div>
+                        <div class="col-lg-4 col-12 mt-lg-5 mt-0">
+                          <figure class="highcharts-figure">
+                            <div id="container2"></div>
+                          </figure>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.container-fluid -->
         </section>
       </div>
       <!-- /.content-wrapper -->
@@ -414,7 +415,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
       // Au chargement de la page, activer le bon onglet
       $(document).ready(function() {
         // Récupérer l'onglet actif depuis PHP
-        const activeTab = "<?php echo isset($_POST['active_tab']) ? $_POST['active_tab'] : 'cds'; ?>";
+        const activeTab = "<?php echo isset($_POST['active_tab']) ? $_POST['active_tab'] : 'cdj'; ?>";
 
         // Activer l'onglet correspondant
         $('a[href="#' + activeTab + '"]').tab('show');
@@ -853,12 +854,36 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
           }
         },
         tooltip: {
-          valueSuffix: 'Stagiaires'
+          pointFormatter: function() {
+            let prevu = <?php echo $total_prevu_cdj ?>;
+            let inscription = <?php echo $total_stagiaires_cdj ?>;
+            let percentage = (inscription / prevu * 100).toFixed(2);
+
+            if (this.series.name === 'Prévu') {
+              return `<b>${this.series.name}:</b> ${prevu} Stagiaires (100%)`;
+            } else {
+              return `<b>${this.series.name}:</b> ${inscription} Stagiaires (${percentage}%)`;
+            }
+          }
         },
         plotOptions: {
           column: {
             pointPadding: 0.2,
-            borderWidth: 0
+            borderWidth: 0,
+            dataLabels: {
+              enabled: true,
+              formatter: function() {
+                let prevu = <?php echo $total_prevu_cdj ?>;
+                let inscription = <?php echo $total_stagiaires_cdj ?>;
+                let percentage = (inscription / prevu * 100).toFixed(2);
+
+                if (this.series.name === 'Prévu') {
+                  return `${prevu} (100%)`;
+                } else {
+                  return `${inscription} (${percentage}%)`;
+                }
+              }
+            }
           }
         },
         series: [{
