@@ -19,6 +19,14 @@ if (empty($_SESSION['sid'])) {
 // TABS
 $activeTab = isset($_POST['active_tab']) ? $_POST['active_tab'] : 'cds';
 
+
+
+// Initialize all required variables at the start of your script or when handling form submission
+$messages = [];  
+$messages_cdj = [];
+$ratio_actif = 0;
+$ratio_actif_cdj = 0;
+
 // AUTO SELECT (chercher dans le select box)
 $sql_types_formation = $dbh->query("SELECT DISTINCT type_formation FROM cds_v2");
 $sql_types_formation->execute();
@@ -218,7 +226,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                         <div class="col-lg-3 col-6">
                           <div class="small-box bg-info">
                             <div class="inner">
-                              <?= $total_prevu_cdj ?>
+                              <h4 class="text-bold"><strong><?= $total_prevu_cdj ?></strong></h4>
                               <p>Stagiaire Prévu</p>
                             </div>
                             <div class="icon">
@@ -232,7 +240,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                         <div class="col-lg-3 col-6">
                           <div class="small-box bg-info">
                             <div class="inner">
-                              <?= $total_stagiaires_cdj ?>
+                              <h4 class="text-bold"><strong><?= $total_stagiaires_cdj ?></strong></h4>
                               <p>Stagiaire Inscrit</p>
                             </div>
                             <div class="icon">
@@ -246,7 +254,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                         <div class="col-lg-3 col-6">
                           <div class="small-box bg-info">
                             <div class="inner">
-                              <?= $total_actif_cdj ?>
+                              <h4 class="text-bold"><strong><?= $total_actif_cdj ?></strong></h4>
                               <p>Stagiaire Actif</p>
                             </div>
                             <div class="icon">
@@ -260,7 +268,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                         <div class="col-lg-3 col-6">
                           <div class="small-box bg-info">
                             <div class="inner">
-                              <?= $total_desistement_cdj ?>
+                              <h4 class="text-bold"><strong><?= $total_desistement_cdj ?></strong></h4>
                               <p>Stagiaire Désistement</p>
                             </div>
                             <div class="icon">
@@ -305,7 +313,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                           <!-- small box -->
                           <div class="small-box bg-info">
                             <div class="inner">
-                              <?= $total_prevu ?>
+                              <h4 class="text-bold"><strong><?= $total_prevu ?></strong></h4>
                               <p>Stagiaire Prévu</p>
                             </div>
                             <div class="icon">
@@ -319,7 +327,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                           <!-- small box -->
                           <div class="small-box bg-info">
                             <div class="inner">
-                              <?= $total_stagiaires ?>
+                              <h4 class="text-bold"><strong><?= $total_stagiaires ?></strong></h4>
                               <p>Stagiaire Inscrit</p>
                             </div>
                             <div class="icon">
@@ -333,7 +341,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                           <!-- small box -->
                           <div class="small-box bg-info">
                             <div class="inner">
-                              <?= $total_actif ?>
+                              <h4 class="text-bold"><strong><?= $total_actif ?></strong></h4>
                               <p>Stagiaire Actif</p>
                             </div>
                             <div class="icon">
@@ -347,13 +355,14 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                           <!-- small box -->
                           <div class="small-box bg-info">
                             <div class="inner">
-                              <?= $total_desistement ?>
+                              <h4 class="text-bold"><strong><?= $total_desistement ?></strong></h4>
                               <p>Stagiaire Desistement</p>
                             </div>
                             <div class="icon">
                               <i class="fas fa-user-times text-white"></i>
                             </div>
                             <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
+                            <!-- <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a> -->
                             <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
@@ -422,7 +431,6 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
       });
     </script>
 
-    <script src="../assets/js/charts/PieChartAnimation.js"></script>
     <!-- PieChartAnimation 1-->
     <script>
       Highcharts.chart('container', {
@@ -593,12 +601,34 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
           }
         },
         tooltip: {
-          valueSuffix: 'Stagiaires'
+          pointFormatter: function() {
+            let prevu = <?php echo $total_prevu ?>;
+            let inscription = <?php echo $total_stagiaires ?>;
+            let percentage = (inscription / prevu * 100).toFixed(2);
+            if (this.series.name === 'Prévu') {
+              return `<b>${this.series.name}:</b> ${prevu} Stagiaires (100%)`;
+            } else {
+              return `<b>${this.series.name}:</b> ${inscription} Stagiaires (${percentage}%)`;
+            }
+          }
         },
         plotOptions: {
           column: {
             pointPadding: 0.2,
-            borderWidth: 0
+            borderWidth: 0,
+            dataLabels: {
+              enabled: true,
+              formatter: function() {
+                let prevu = <?php echo $total_prevu ?>;
+                let inscription = <?php echo $total_stagiaires ?>;
+                let percentage = (inscription / prevu * 100).toFixed(2);
+                if (this.series.name === 'Prévu') {
+                  return `${prevu} (100%)`;
+                } else {
+                  return `${inscription} (${percentage}%)`;
+                }
+              }
+            }
           }
         },
         series: [{
