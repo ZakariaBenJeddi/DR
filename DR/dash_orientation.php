@@ -119,11 +119,11 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
             <div class="row align-items-center">
               <div class="form-group col-md-3">
                 <label for="dd" class="form-label text-muted">Sélectionner la Date de Début</label>
-                <input type="date" class="form-control" id="dd" name="dd" placeholder="Nom" required value="2025-02-12">
+                <input type="date" class="form-control" id="dd" name="dd" placeholder="Nom" required value="2025-02-28">
               </div>
               <div class="form-group col-md-3">
                 <label for="df" class="form-label text-muted">Sélectionner la Date De Fin</label>
-                <input type="date" class="form-control" id="df" name="df" placeholder="Prenom" required value="2025-02-12">
+                <input type="date" class="form-control" id="df" name="df" placeholder="Prenom" required value="2025-02-28">
               </div>
             </div>
             <script>
