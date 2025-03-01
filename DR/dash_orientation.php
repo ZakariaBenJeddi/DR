@@ -130,6 +130,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
               // Obtenez la balise input type date par son ID
               const dd = document.getElementById("dd");
               const df = document.getElementById("df");
+              // test test
 
               // Obtenez la date d'aujourd'hui sous forme de chaîne (AAAA-MM-JJ)
               const today = new Date().toISOString().split('T')[0];
