@@ -499,12 +499,12 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
           }
         },
         legend: {
-          layout: 'horizontal', // Mettre en horizontal
-          align: 'right', // Aligné à droite
-          verticalAlign: 'bottom', // Aligné en bas
-          x: 0, // Ajustement horizontal
-          y: 0, // Ajustement vertical
-          floating: false, // Ne pas flotter pour bien se placer
+          layout: 'horizontal',
+          align: 'right',
+          verticalAlign: 'bottom',
+          x: 0,
+          y: 0,
+          floating: false,
           borderWidth: 1,
           backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
           shadow: true
@@ -514,19 +514,25 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
         },
         series: [{
           name: 'Year 2023',
-          data: [632, 727, 3202, 721, 100]
+          // data: [632, 727, 3202, 721, 100]
+          data: [<?php echo $totals[$years[0]]['total_prevu']; ?>, <?php echo $totals[$years[0]]['total_stagiaires']; ?>, <?php echo $totals[$years[0]]['total_actif']; ?>, <?php echo $totals[$years[0]]['total_desistement']; ?>, <?php echo $totals[$years[0]]['total_redoublement']; ?>]
+
         }, {
           name: 'Year 2024',
-          data: [814, 841, 3714, 726, 100]
+          // data: [814, 841, 3714, 726, 100]
+          data: [<?php echo $totals[$years[1]]['total_prevu']; ?>, <?php echo $totals[$years[1]]['total_stagiaires']; ?>, <?php echo $totals[$years[1]]['total_actif']; ?>, <?php echo $totals[$years[1]]['total_desistement']; ?>, <?php echo $totals[$years[1]]['total_redoublement']; ?>]
+
         }, {
           name: 'Year 2025',
-          data: [
-            <?= $total_prevu ?>,
-            <?= $total_stagiaires ?>,
-            <?= $total_actif ?>,
-            <?= $total_desistement ?>,
-            <?= $total_redoublement ?>
-          ]
+          // data: [
+          //   <?php // echo $total_prevu ?>,
+          //   <?php // echo $total_stagiaires ?>,
+          //   <?php // echo $total_actif ?>,
+          //   <?php // echo $total_desistement ?>,
+          //   <?php // echo $total_redoublement ?>
+          // ]
+          data: [<?php echo $totals[$years[2]]['total_prevu']; ?>, <?php echo $totals[$years[2]]['total_stagiaires']; ?>, <?php echo $totals[$years[2]]['total_actif']; ?>, <?php echo $totals[$years[2]]['total_desistement']; ?>, <?php echo $totals[$years[2]]['total_redoublement']; ?>]
+
         }]
       });
     </script>
@@ -574,10 +580,10 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
         legend: {
           layout: 'vertical',
           align: 'right',
-          verticalAlign: 'top',
-          x: -40,
-          y: 80,
-          floating: true,
+          verticalAlign: 'bottom',
+          x: 0,
+          y: 0,
+          floating: false,
           borderWidth: 1,
           backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
           shadow: true
@@ -587,20 +593,23 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
         },
         series: [{
           name: 'Year 2023',
-          data: [632, 727, 3202, 721, 300, 432]
+          // data: [632, 727, 3202, 721, 300, 432]
+          data: [<?php echo $totals_cdj[$years[0]]['total_prevu']; ?>, <?php echo $totals_cdj[$years[0]]['total_stagiaires']; ?>, <?php echo $totals_cdj[$years[0]]['total_actif']; ?>, <?php echo $totals_cdj[$years[0]]['total_desistement']; ?>, <?php echo $totals_cdj[$years[0]]['total_redoublement']; ?>, <?php echo $totals_cdj[$years[0]]['total_passerelle'];?>]
         }, {
           name: 'Year 2024',
-          data: [814, 841, 3714, 726, 120, 492]
+          // data: [814, 841, 3714, 726, 120, 492]
+          data: [<?php echo $totals_cdj[$years[1]]['total_prevu']; ?>, <?php echo $totals_cdj[$years[1]]['total_stagiaires']; ?>, <?php echo $totals_cdj[$years[1]]['total_actif']; ?>, <?php echo $totals_cdj[$years[1]]['total_desistement']; ?>, <?php echo $totals_cdj[$years[1]]['total_redoublement']; ?>, <?php echo $totals_cdj[$years[1]]['total_passerelle'];?>]
         }, {
           name: 'Year 2025',
-          data: [
-            <?= $total_prevu_cdj ?>,
-            <?= $total_stagiaires_cdj ?>,
-            <?= $total_actif_cdj ?>,
-            <?= $total_desistement_cdj ?>,
-            <?= $total_redoublement_cdj ?>,
-            <?= $total_passerelle_cdj ?>
-          ]
+          // data: [
+          //   <?php // echo $total_prevu_cdj ?>,
+          //   <?php // echo $total_stagiaires_cdj ?>,
+          //   <?php // echo $total_actif_cdj ?>,
+          //   <?php // echo $total_desistement_cdj ?>,
+          //   <?php // echo $total_redoublement_cdj ?>,
+          //   <?php // echo $total_passerelle_cdj ?>
+          // ]
+          data: [<?php echo $totals_cdj[$years[2]]['total_prevu']; ?>, <?php echo $totals_cdj[$years[2]]['total_stagiaires']; ?>, <?php echo $totals_cdj[$years[2]]['total_actif']; ?>, <?php echo $totals_cdj[$years[2]]['total_desistement']; ?>, <?php echo $totals_cdj[$years[2]]['total_redoublement']; ?>, <?php echo $totals_cdj[$years[2]]['total_passerelle'];?>]
         }]
       });
     </script>

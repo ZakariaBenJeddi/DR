@@ -213,3 +213,115 @@ WHERE YEAR(date_creation) = :dd";
     $messages_cdj[] = "Déséquilibre détecté : somme des catégories ($total_calculated_cdj) ≠ total inscrits ($total_stagiaires_cdj).";
   }
 }
+
+//!
+
+// Récupérer l'année actuelle
+$currentYear = date("Y");
+
+// Définir les années à récupérer
+$years = [
+    $currentYear - 2, // 2023
+    $currentYear - 1, // 2024
+    $currentYear,     // 2025
+];
+
+// Préparer une variable pour stocker les résultats des 3 années
+$totals = [];
+$totals_cdj = [];
+
+foreach ($years as $year) {
+    $query = "SELECT 
+                SUM(prevu) as total_prevu,
+                SUM(stagiaires) as total_stagiaires,
+                SUM(actif) as total_actif,
+                SUM(desistement) as total_desistement,
+                SUM(redoublement) as total_redoublement
+              FROM cds_v2
+              WHERE YEAR(date_creation) = :year";
+
+    $stmt = $dbh->prepare($query);
+    $stmt->execute([':year' => $year]);
+    $results = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Stocker les résultats de chaque année
+    $totals[$year] = [
+        'total_prevu' => $results['total_prevu'] ?? 0,
+        'total_stagiaires' => $results['total_stagiaires'] ?? 0,
+        'total_actif' => $results['total_actif'] ?? 0,
+        'total_desistement' => $results['total_desistement'] ?? 0,
+        'total_redoublement' => $results['total_redoublement'] ?? 0
+    ];
+
+
+    // chart cdj
+    $query_cdj_2 = "SELECT 
+                SUM(prevu) as total_prevu,
+                SUM(stagiaires) as total_stagiaires,
+                SUM(actif) as total_actif,
+                SUM(desistement) as total_desistement,
+                SUM(redoublement) as total_redoublement,
+                SUM(passerelle) as total_passerelle
+              FROM cdj_v2
+              WHERE YEAR(date_creation) = :year";
+
+    $stmt_cdj_2 = $dbh->prepare($query_cdj_2);
+    $stmt_cdj_2->execute([':year' => $year]);
+    $results_cdj_2 = $stmt_cdj_2->fetch(PDO::FETCH_ASSOC);
+    // Stocker les résultats de chaque année
+    $totals_cdj[$year] = [
+        'total_prevu' => $results_cdj_2['total_prevu'] ?? 0,
+        'total_stagiaires' => $results_cdj_2['total_stagiaires'] ?? 0,
+        'total_actif' => $results_cdj_2['total_actif'] ?? 0,
+        'total_desistement' => $results_cdj_2['total_desistement'] ?? 0,
+        'total_redoublement' => $results_cdj_2['total_redoublement'] ?? 0,
+        'total_passerelle' => $results_cdj_2['total_passerelle'] ?? 0
+    ];
+}
+
+// Préparer les données dynamiques à injecter dans le JavaScript CDS
+$total_prevu_data = implode(', ', array_map(function($year) use ($totals) {
+    return $totals[$year]['total_prevu'];
+}, $years));
+
+$total_stagiaires_data = implode(', ', array_map(function($year) use ($totals) {
+    return $totals[$year]['total_stagiaires'];
+}, $years));
+
+$total_actif_data = implode(', ', array_map(function($year) use ($totals) {
+    return $totals[$year]['total_actif'];
+}, $years));
+
+$total_desistement_data = implode(', ', array_map(function($year) use ($totals) {
+    return $totals[$year]['total_desistement'];
+}, $years));
+
+$total_redoublement_data = implode(', ', array_map(function($year) use ($totals) {
+    return $totals[$year]['total_redoublement'];
+}, $years));
+
+
+// Préparer les données dynamiques à injecter dans le JavaScript CDJ
+$total_prevu_data_cdj = implode(', ', array_map(function($year) use ($totals_cdj) {
+    return $totals_cdj[$year]['total_prevu'];
+}, $years));
+
+$total_stagiaires_data_cdj = implode(', ', array_map(function($year) use ($totals_cdj) {
+    return $totals_cdj[$year]['total_stagiaires'];
+}, $years));
+
+$total_actif_data_cdj = implode(', ', array_map(function($year) use ($totals_cdj) {
+    return $totals_cdj[$year]['total_actif'];
+}, $years));
+
+$total_desistement_data_cdj = implode(', ', array_map(function($year) use ($totals_cdj) {
+    return $totals_cdj[$year]['total_desistement'];
+}, $years));
+
+$total_redoublement_data_cdj = implode(', ', array_map(function($year) use ($totals_cdj) {
+    return $totals_cdj[$year]['total_redoublement'];
+}, $years));
+
+$total_passerelle_data_cdj = implode(', ', array_map(function($year) use ($totals_cdj) {
+    return $totals_cdj[$year]['total_passerelle'];
+}, $years));
