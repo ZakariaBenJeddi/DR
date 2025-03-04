@@ -22,7 +22,7 @@ $activeTab = isset($_POST['active_tab']) ? $_POST['active_tab'] : 'cds';
 
 
 // Initialize all required variables at the start of your script or when handling form submission
-$messages = [];  
+$messages = [];
 $messages_cdj = [];
 $ratio_actif = 0;
 $ratio_actif_cdj = 0;
@@ -119,19 +119,29 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
             <div class="row align-items-center">
               <div class="form-group col-md-3">
                 <label for="dd" class="form-label text-muted">Sélectionner la Date de Début</label>
-                <input type="date" class="form-control" id="dd" name="dd" placeholder="Nom" required value="2025-02-28">
+                <!-- <input type="date" class="form-control" id="dd" name="dd" placeholder="Nom" required value="2025-02-28"> -->
+                <select name="dd2" id="dd2" class="form-select">
+                  <option value="">Sélectionner une année</option>
+                </select>
               </div>
-              <div class="form-group col-md-3">
+              <!-- <div class="form-group col-md-3">
                 <label for="df" class="form-label text-muted">Sélectionner la Date De Fin</label>
                 <input type="date" class="form-control" id="df" name="df" placeholder="Prenom" required value="2025-02-28">
+              </div> -->
+              <div class="col-lg-3 col-12 mb-lg-0">
+                <label for="filiere" class="form-label text-muted">Annee Etude</label>
+                <input class="form-control" name="annee_etude" list="annee_etude_datalist" placeholder="Annee Etude">
+                <datalist id="annee_etude_datalist">
+                  <?php foreach ($annee_etude as $ann_etu) { ?>
+                    <option><?= $ann_etu['annee_etude'] ?></option>
+                  <?php } ?>
+                </datalist>
               </div>
             </div>
             <script>
               // Obtenez la balise input type date par son ID
               const dd = document.getElementById("dd");
               const df = document.getElementById("df");
-              // test test
-              // test2 test2
 
               // Obtenez la date d'aujourd'hui sous forme de chaîne (AAAA-MM-JJ)
               const today = new Date().toISOString().split('T')[0];
@@ -180,15 +190,18 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                   <?php } ?>
                 </datalist>
               </div>
-              <div class="col-lg-3 col-12 mb-lg-0">
+              <!-- <div class="col-lg-3 col-12 mb-lg-0">
                 <label for="filiere" class="form-label text-muted">Annee Etude</label>
                 <input class="form-control" name="annee_etude" list="annee_etude_datalist" placeholder="Annee Etude">
                 <datalist id="annee_etude_datalist">
-                  <?php foreach ($annee_etude as $ann_etu) { ?>
-                    <option><?= $ann_etu['annee_etude'] ?></option>
-                  <?php } ?>
+                  <?php //foreach ($annee_etude as $ann_etu) { 
+                  ?>
+                    <option><?php //$ann_etu['annee_etude'] 
+                            ?></option>
+                  <?php //} 
+                  ?>
                 </datalist>
-              </div>
+              </div> -->
               <div class="row">
                 <div class="form-group col-md-3 d-flex justify-content-around align-items-center mt-5">
                   <button type="submit" name="chercher" class="btn bg-blue text-white rounded-sm p-1" style="display: flex; align-items: center;">
@@ -235,7 +248,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                               <i class="fas fa-calendar-check text-white"></i>
                             </div>
                             <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
-                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="cdj_v2.php" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
 
@@ -249,7 +262,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                               <i class="fas fa-user-check text-white"></i>
                             </div>
                             <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
-                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="cdj_v2.php" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
 
@@ -263,7 +276,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                               <i class="fas fa-user-graduate text-white"></i>
                             </div>
                             <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
-                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="cdj_v2.php" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
 
@@ -277,7 +290,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                               <i class="fas fa-user-times text-white"></i>
                             </div>
                             <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
-                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="cdj_v2.php" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
                         <?php if (!empty($messages_cdj)) : ?>
@@ -322,7 +335,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                               <i class="fas fa-calendar-check text-white"></i>
                             </div>
                             <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
-                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="cds_v2.php" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
                         <div class="col-lg-3 col-6">
@@ -336,7 +349,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                               <i class="fas fa-user-check text-white"></i>
                             </div>
                             <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
-                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="cds_v2.php" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
                         <div class="col-lg-3 col-6">
@@ -350,7 +363,7 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                               <i class="fas fa-user-graduate text-white"></i>
                             </div>
                             <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
-                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+                            <a href="cds_v2.php" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
                         <div class="col-lg-3 col-6">
@@ -364,8 +377,8 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
                               <i class="fas fa-user-times text-white"></i>
                             </div>
                             <!-- <a href="list_demande_prix.php?mnt=red" class="small-box-footer">Plus d'infos <i class="fas fa-arrow-circle-right"></i></a> -->
-                            <!-- <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a> -->
-                            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+                            <!-- <a href="cds_v2.php" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a> -->
+                            <a href="cds_v2.php" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
                           </div>
                         </div>
                         <?php if (!empty($messages)  && count($messages) > 0) : ?>
@@ -414,6 +427,18 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
+    <script>
+      let select = document.getElementById("dd2");
+      let anneeActuelle = new Date().getFullYear();
+
+      for (let i = anneeActuelle; i >= anneeActuelle - 10; i--) {
+        let option = document.createElement("option");
+        option.value = i;
+        option.textContent = i;
+        select.appendChild(option);
+      }
+    </script>
 
     <!-- DISPLAY ACTIVE TABS APRES LA REFRECHE ET LE FILTRAGE -->
     <script>
@@ -474,12 +499,12 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
           }
         },
         legend: {
-          layout: 'vertical',
-          align: 'right',
-          verticalAlign: 'top',
-          x: -40,
-          y: 80,
-          floating: true,
+          layout: 'horizontal', // Mettre en horizontal
+          align: 'right', // Aligné à droite
+          verticalAlign: 'bottom', // Aligné en bas
+          x: 0, // Ajustement horizontal
+          y: 0, // Ajustement vertical
+          floating: false, // Ne pas flotter pour bien se placer
           borderWidth: 1,
           backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
           shadow: true

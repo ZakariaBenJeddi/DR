@@ -2,6 +2,7 @@
 
 if (isset($_POST['chercher'])) {
   $dd = $_POST['dd'];
+  $dd2 = $_POST['dd2'];
   $ff = $_POST['df'];
   $formation = !empty($_POST['formation']) ? $_POST['formation'] : null;
   $niveau = !empty($_POST['niveau']) ? $_POST['niveau'] : null;
@@ -18,7 +19,8 @@ if (isset($_POST['chercher'])) {
       SUM(desistement) as total_desistement,
       SUM(redoublement) as total_redoublement
   FROM cds_v2 
-  WHERE date_creation BETWEEN :dd AND :ff";
+  WHERE YEAR(date_creation) = :dd";
+  //WHERE date_creation BETWEEN :dd AND :ff";
 
   // Construire la requête pour les cours du jour
   $query_cdj = "SELECT 
@@ -30,11 +32,14 @@ if (isset($_POST['chercher'])) {
     SUM(redoublement) as total_redoublement_cdj,
     SUM(passerelle) as total_passerelle_cdj
 FROM cdj_v2 
-WHERE date_creation BETWEEN :dd AND :ff";
+WHERE YEAR(date_creation) = :dd";
+//WHERE date_creation BETWEEN :dd AND :ff";
 
   // Ajouter les conditions de filtrage si elles sont définies
-  $params = [':dd' => $dd, ':ff' => $ff];
-  $params_cdj = [':dd' => $dd, ':ff' => $ff];
+  $params = [':dd' => $dd2];
+  $params_cdj = [':dd' => $dd2];
+  // $params = [':dd' => $dd2, ':ff' => $ff];
+  // $params_cdj = [':dd' => $dd2, ':ff' => $ff];
 
   if ($formation) {
     $query .= " AND type_formation = :formation";

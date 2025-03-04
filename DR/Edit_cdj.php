@@ -95,8 +95,7 @@ if (isset($_POST['ajouter'])) {
             <div class="card">
               <div class="card-header p-2">
                 <ul class="nav nav-pills">
-                  <li class="nav-item"><a class="nav-link active" href="#for_info" data-toggle="tab">Détail de la société</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#img_ch" data-toggle="tab">Mettre à jour l'image</a></li>
+                  <li class="nav-item"><a class="nav-link active" href="#for_info" data-toggle="tab">Détail Cours Du Jour</a></li>
                 </ul>
               </div><!-- /.card-header -->
               <div class="card-body">
