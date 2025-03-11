@@ -579,8 +579,8 @@ $ratio_actif_cdj = ($total_stagiaires_cdj > 0) ? ($total_actif_cdj / $total_stag
         },
         legend: {
           layout: 'horizontal',
-          align: 'right',
-          // align: 'left',
+          // align: 'right',
+          align: 'left',
           verticalAlign: 'bottom',
           x: 0,
           y: 0,
